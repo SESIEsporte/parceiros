@@ -318,6 +318,58 @@ body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);d
   .kpi-grid{grid-template-columns:repeat(2,1fr);}
   .main{padding:16px;}
 }
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--dark2);border:1px solid var(--border);border-radius:6px;width:580px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--white);}
+.modal-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.modal-close{background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:2px 6px;transition:color 0.15s;line-height:1;}
+.modal-close:hover{color:var(--text);}
+.modal-body{flex:1;overflow-y:auto;padding:18px 22px;}
+.modal-body::-webkit-scrollbar{width:4px;}
+.modal-body::-webkit-scrollbar-thumb{background:var(--border2);}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-grid.full{grid-template-columns:1fr;}
+.form-field{display:flex;flex-direction:column;gap:5px;}
+.form-field.span2{grid-column:span 2;}
+.form-field label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);}
+.form-field input,.form-field select,.form-field textarea{background:var(--dark3);border:1px solid var(--border2);border-radius:3px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color 0.15s;appearance:none;}
+.form-field input::placeholder,.form-field textarea::placeholder{color:var(--text3);}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--red);}
+.form-field select option{background:var(--dark3);}
+.form-field textarea{resize:vertical;min-height:60px;}
+.form-section-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin:14px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--border);grid-column:span 2;}
+.upload-area-modal{border:1px dashed var(--border2);border-radius:3px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;}
+.upload-area-modal:hover{border-color:var(--red);background:var(--red-light);}
+.upload-area-modal.has-file{border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.04);}
+/* ── DOCS/GRADE/PROFS NO DRAWER ── */
+.docs-list,.prof-list{display:flex;flex-direction:column;gap:6px;}
+.doc-row,.prof-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--dark3);border:1px solid var(--border);border-radius:3px;transition:border-color 0.15s;}
+.doc-row:hover{border-color:var(--border2);}
+.doc-row-info,.prof-row-info{flex:1;min-width:0;}
+.doc-row-name,.prof-row-name{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.doc-row-date,.prof-row-meta{font-size:10px;color:var(--text3);}
+.doc-row-btn{padding:4px 10px;background:transparent;border:1px solid var(--border2);border-radius:2px;font-size:10px;color:var(--text2);cursor:pointer;transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
+.doc-row-btn:hover{border-color:var(--red);color:var(--red);}
+.prof-avatar-mini{width:26px;height:26px;border-radius:50%;flex-shrink:0;background:var(--red-light);border:1px solid rgba(200,16,46,0.3);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--red);}
+.curso-badge{padding:2px 8px;border-radius:2px;font-size:10px;font-weight:500;white-space:nowrap;flex-shrink:0;}
+.curso-ok{background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+.curso-parcial{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,158,11,0.3);}
+.curso-nao{background:var(--dark4);color:var(--text3);border:1px solid var(--border2);}
+.grade-mini{overflow-x:auto;margin-top:4px;}
+.grade-mini table{width:100%;border-collapse:collapse;min-width:380px;font-size:11px;}
+.grade-mini th{background:var(--dark3);padding:6px 8px;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);text-align:left;border-bottom:1px solid var(--border2);white-space:nowrap;}
+.grade-mini td{padding:6px 8px;border-bottom:1px solid var(--border);color:var(--text2);}
+.grade-mini tr:last-child td{border-bottom:none;}
+.empty-inner{font-size:12px;color:var(--text3);text-align:center;padding:14px;}
+.btn-export-grade{padding:6px 14px;background:transparent;border:1px solid var(--border2);border-radius:2px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--text2);cursor:pointer;transition:all 0.15s;margin-top:8px;}
+.btn-export-grade:hover{border-color:var(--green);color:var(--green);}
+/* ── BTN ADD PARCEIRO ── */
+.btn-add-parceiro{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--red);border:none;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:white;cursor:pointer;transition:background 0.15s;white-space:nowrap;}
+.btn-add-parceiro:hover{background:var(--red-d);}
 </style>
 </head>
 <body>
@@ -393,6 +445,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);d
       <option value="atencao">Atenção (90d)</option>
     </select>
     <span class="results-count" id="results-count"></span>
+    <button class="btn-add-parceiro" onclick="abrirModalRetroativo()">+ Parceiro Retroativo</button>
   </div>
 
   <!-- TABLE -->
@@ -533,6 +586,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);d
       </div>
     </div>
 
+    <!-- DOCUMENTOS -->
+    <div class="drawer-section">
+      <div class="drawer-section-title">Documentos</div>
+      <div id="d-docs-list"><div class="empty-inner">Carregando...</div></div>
+    </div>
+
+    <!-- GRADE HORÁRIA -->
+    <div class="drawer-section">
+      <div class="drawer-section-title">Grade Horária</div>
+      <div id="d-grade-wrap"><div class="empty-inner">Carregando...</div></div>
+    </div>
+
+    <!-- PROFESSORES -->
+    <div class="drawer-section">
+      <div class="drawer-section-title">Professores / Gestores</div>
+      <div id="d-profs-list"><div class="empty-inner">Carregando...</div></div>
+    </div>
+
   </div><!-- /drawer-body -->
 
   <div class="drawer-footer">
@@ -541,9 +612,84 @@ body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);d
   </div>
 </div>
 
+<!-- MODAL RETROATIVO -->
+<div class="modal-overlay" id="modal-overlay" onclick="fecharModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">Parceiro Retroativo</div>
+        <div class="modal-sub">Cadastro de parceiro existente que não passou pela trilha digital</div>
+      </div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-section-title">Dados do Parceiro</div>
+        <div class="form-field span2">
+          <label>Razão Social</label>
+          <input type="text" id="r-razao" placeholder="Nome da empresa ou prefeitura"/>
+        </div>
+        <div class="form-field">
+          <label>CNPJ</label>
+          <input type="text" id="r-cnpj" placeholder="00.000.000/0000-00" maxlength="18" oninput="maskCNPJ(this)"/>
+        </div>
+        <div class="form-field">
+          <label>Nome do Responsável</label>
+          <input type="text" id="r-responsavel" placeholder="Nome completo"/>
+        </div>
+        <div class="form-field">
+          <label>Tipo</label>
+          <select id="r-tipo">
+            <option value="">Selecione...</option>
+            <option value="prefeitura">Prefeitura</option>
+            <option value="empresa">Empresa</option>
+            <option value="ong">ONG / Associação</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Telefone</label>
+          <input type="tel" id="r-telefone" placeholder="(11) 99999-9999"/>
+        </div>
+        <div class="form-field span2">
+          <label>E-mail</label>
+          <input type="email" id="r-email" placeholder="contato@parceiro.com"/>
+        </div>
+
+        <div class="form-section-title">Contrato</div>
+        <div class="form-field">
+          <label>Início da Vigência</label>
+          <input type="date" id="r-inicio"/>
+        </div>
+        <div class="form-field">
+          <label>Fim da Vigência</label>
+          <input type="date" id="r-fim"/>
+        </div>
+        <div class="form-field span2">
+          <label>Observações</label>
+          <textarea id="r-obs" placeholder="Informações adicionais sobre o contrato..."></textarea>
+        </div>
+        <div class="form-field span2">
+          <label>Arquivo do Contrato (PDF)</label>
+          <div class="upload-area-modal" id="r-upload-area" onclick="document.getElementById('r-arquivo').click()">
+            <div style="font-size:20px;margin-bottom:4px;">📎</div>
+            <div style="font-size:12px;color:var(--text3);"><strong style="color:var(--text2);">Clique para selecionar</strong> o contrato digitalizado</div>
+          </div>
+          <input type="file" id="r-arquivo" accept=".pdf,.jpg,.png" style="display:none" onchange="onArquivoRetroativo(this)"/>
+        </div>
+      </div>
+      <div class="msg" id="msg-modal"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" onclick="salvarRetroativo()">Cadastrar Parceiro</button>
+      <button class="btn-ghost" onclick="fecharModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const SUPABASE_URL = 'https://lluujmxlmcdvyvkrmbup.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_9Mlzq2DrX8jp6rQpw0TyRg_9YFw__Wn';
+const SUPABASE_KEY = 'sb_publishable_NJ5gFVAMXDgm3SNcAVz-tA_IMAiLLBj';
 const H = { 'Content-Type':'application/json', 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}` };
 
 let orientador = null;
@@ -750,6 +896,11 @@ async function openDrawer(parceiroId) {
   // Contrato
   await carregarContrato(p);
 
+  // Docs, grade, professores
+  carregarDocsDrawer(p);
+  carregarGradeDrawer(p);
+  carregarProfsDrawer(p);
+
   document.getElementById('overlay').classList.add('open');
   document.getElementById('drawer').classList.add('open');
 }
@@ -866,6 +1017,14 @@ function fmtCNPJ(c) {
   c = (c||'').replace(/\D/g,'');
   return c.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5') || c;
 }
+function maskCNPJ(el) {
+  let v=el.value.replace(/\D/g,'').substring(0,14);
+  v=v.replace(/^(\d{2})(\d)/,'$1.$2');
+  v=v.replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3');
+  v=v.replace(/\.(\d{3})(\d)/,'.$1/$2');
+  v=v.replace(/(\d{4})(\d)/,'$1-$2');
+  el.value=v;
+}
 function fmtDate(d) {
   if (!d) return '—';
   return new Date(d).toLocaleDateString('pt-BR');
@@ -883,6 +1042,192 @@ function hideMsg(id) { document.getElementById(id).className = 'msg'; }
 function sair() {
   localStorage.removeItem('sesi_orientador');
   window.location.href = 'index.html';
+}
+
+// ─── CARREGA DOCS, GRADE, PROFESSORES NO DRAWER ───────────────
+async function carregarDocsDrawer(p) {
+  const el = document.getElementById('d-docs-list');
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/documentos?parceiro_id=eq.${p.id}&select=*&order=enviado_em.desc`,{headers:H});
+    const docs = await r.json();
+    if(!docs.length){ el.innerHTML='<div class="empty-inner">Nenhum documento enviado</div>'; return; }
+    el.innerHTML = docs.map(d => `
+      <div class="doc-row">
+        <span style="font-size:14px;">📄</span>
+        <div class="doc-row-info">
+          <div class="doc-row-name">${d.nome_arquivo}</div>
+          <div class="doc-row-date">${d.tipo} · ${fmtDate(d.enviado_em)}</div>
+        </div>
+        ${d.sharepoint_url
+          ? `<button class="doc-row-btn" onclick="window.open('${d.sharepoint_url}','_blank')">Abrir</button>`
+          : '<span style="font-size:10px;color:var(--text3);">Sem link</span>'
+        }
+      </div>`).join('');
+  } catch(e){ el.innerHTML='<div class="empty-inner">Erro ao carregar</div>'; }
+}
+
+async function carregarGradeDrawer(p) {
+  const el = document.getElementById('d-grade-wrap');
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/grade_horaria?parceiro_id=eq.${p.id}&select=*&order=modalidade.asc`,{headers:H});
+    const rows = await r.json();
+    if(!rows.length){ el.innerHTML='<div class="empty-inner">Nenhuma grade cadastrada</div>'; return; }
+    el.innerHTML = `
+      <div class="grade-mini">
+        <table>
+          <thead><tr>
+            <th>Modalidade</th><th>Nível</th><th>Gênero</th>
+            <th>Faixa Etária</th><th>Horário</th><th>Professor</th>
+          </tr></thead>
+          <tbody>
+            ${rows.map(r=>`<tr>
+              <td>${r.modalidade||'—'}</td><td>${r.nivel||'—'}</td>
+              <td>${r.genero||'—'}</td><td>${r.faixa_etaria||'—'}</td>
+              <td>${r.horario||'—'}</td><td>${r.professor||'—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <button class="btn-export-grade" onclick="exportarGradeXLS(${JSON.stringify(rows).replace(/"/g,'&quot;')}, '${p.razao_social}')">
+        ⬇ Exportar Grade XLS
+      </button>`;
+  } catch(e){ el.innerHTML='<div class="empty-inner">Erro ao carregar</div>'; }
+}
+
+async function carregarProfsDrawer(p) {
+  const el = document.getElementById('d-profs-list');
+  try {
+    const [rS, rPC] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/acesso_sipaf?parceiro_id=eq.${p.id}&select=*&order=nome.asc`,{headers:H}),
+      fetch(`${SUPABASE_URL}/rest/v1/progresso_curso?parceiro_id=eq.${p.id}&select=cpf,concluida`,{headers:H})
+    ]);
+    const profs = await rS.json();
+    const prog = await rPC.json();
+
+    if(!profs.length){ el.innerHTML='<div class="empty-inner">Nenhum profissional cadastrado</div>'; return; }
+
+    // contar aulas concluídas por CPF
+    const conclMap = {};
+    prog.forEach(pc => { conclMap[pc.cpf] = (conclMap[pc.cpf]||0) + (pc.concluida?1:0); });
+
+    el.innerHTML = profs.map(s => {
+      const concl = conclMap[s.cpf]||0;
+      const badge = concl>=4
+        ? '<span class="curso-badge curso-ok">✓ Concluído</span>'
+        : concl>0
+          ? `<span class="curso-badge curso-parcial">${concl}/4 aulas</span>`
+          : '<span class="curso-badge curso-nao">Não iniciado</span>';
+      const initials = s.nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+      return `<div class="prof-row">
+        <div class="prof-avatar-mini">${initials}</div>
+        <div class="prof-row-info">
+          <div class="prof-row-name">${s.nome}</div>
+          <div class="prof-row-meta">${s.funcao_sipaf||'—'} · CPF: ${s.cpf}</div>
+        </div>
+        ${badge}
+      </div>`;
+    }).join('');
+  } catch(e){ el.innerHTML='<div class="empty-inner">Erro ao carregar</div>'; }
+}
+
+// ─── EXPORTAR GRADE XLS ───────────────────────────────────────
+function exportarGradeXLS(rows, razaoSocial) {
+  const header = ['Modalidade','Nível','Fase/Turma','Gênero','Faixa Etária','Horário','Professor','Local'];
+  const data = rows.map(r=>[r.modalidade,r.nivel,r.fase_turma,r.genero,r.faixa_etaria,r.horario,r.professor,r.local]);
+  const ws = [header,...data].map(r=>r.map(c=>`"${(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const bom = '\uFEFF';
+  const blob = new Blob([bom+ws],{type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Grade_${razaoSocial.replace(/[^a-z0-9]/gi,'_')}.csv`;
+  a.click();
+}
+
+// ─── MODAL RETROATIVO ─────────────────────────────────────────
+let arquivoRetroativo = null;
+
+function abrirModalRetroativo() {
+  ['r-razao','r-cnpj','r-responsavel','r-telefone','r-email','r-inicio','r-fim','r-obs']
+    .forEach(id => document.getElementById(id).value='');
+  document.getElementById('r-tipo').value='';
+  document.getElementById('r-upload-area').classList.remove('has-file');
+  document.getElementById('r-upload-area').innerHTML=`<div style="font-size:20px;margin-bottom:4px;">📎</div><div style="font-size:12px;color:var(--text3);"><strong style="color:var(--text2);">Clique para selecionar</strong> o contrato digitalizado</div>`;
+  arquivoRetroativo=null;
+  hideMsg('msg-modal');
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function fecharModal(e) {
+  if(!e||e.target===document.getElementById('modal-overlay'))
+    document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function onArquivoRetroativo(input) {
+  if(!input.files[0]) return;
+  arquivoRetroativo = input.files[0];
+  const area = document.getElementById('r-upload-area');
+  area.classList.add('has-file');
+  area.innerHTML=`<div style="font-size:20px;margin-bottom:4px;">✅</div><div style="font-size:12px;color:var(--green);"><strong>${input.files[0].name}</strong></div>`;
+}
+
+async function salvarRetroativo() {
+  const razao   = document.getElementById('r-razao').value.trim();
+  const cnpj    = document.getElementById('r-cnpj').value.replace(/\D/g,'');
+  const resp    = document.getElementById('r-responsavel').value.trim();
+  const tipo    = document.getElementById('r-tipo').value;
+  const tel     = document.getElementById('r-telefone').value.trim();
+  const email   = document.getElementById('r-email').value.trim();
+  const inicio  = document.getElementById('r-inicio').value;
+  const fim     = document.getElementById('r-fim').value;
+  const obs     = document.getElementById('r-obs').value.trim();
+
+  if(!razao||!cnpj||!resp){ showMsg('msg-modal','Preencha Razão Social, CNPJ e Responsável.','error'); return; }
+  if(cnpj.length!==14){ showMsg('msg-modal','CNPJ inválido.','error'); return; }
+
+  const btn = document.querySelector('#modal-overlay .btn-primary');
+  btn.disabled=true; btn.textContent='Salvando...';
+  hideMsg('msg-modal');
+
+  try {
+    // Criar parceiro
+    const rP = await fetch(`${SUPABASE_URL}/rest/v1/parceiros`,{
+      method:'POST',
+      headers:{...H,'Prefer':'return=representation'},
+      body:JSON.stringify({
+        razao_social:razao, cnpj, nome_responsavel:resp,
+        tipo:tipo||null, telefone:tel||null, email:email||null,
+        unidade_sesi:orientador.unidade_sesi,
+        orientador_id:orientador.id,
+        retroativo:true, status: inicio&&fim ? 'ativo':'em_andamento',
+        etapa_documentos:false,etapa_grade:false,
+        etapa_acesso_sipaf:false,etapa_curso_m1:false
+      })
+    });
+    const novoParceiro = await rP.json();
+    const pid = novoParceiro[0].id;
+
+    // Criar contrato se datas preenchidas
+    if(inicio&&fim) {
+      await fetch(`${SUPABASE_URL}/rest/v1/contratos`,{
+        method:'POST', headers:H,
+        body:JSON.stringify({
+          parceiro_id:pid, orientador_id:orientador.id,
+          razao_social:razao, cnpj,
+          vigencia_inicio:inicio, vigencia_fim:fim,
+          observacoes:obs||null
+        })
+      });
+    }
+
+    showMsg('msg-modal','Parceiro cadastrado com sucesso!','success');
+    await Promise.all([carregarParceiros(),carregarAlertas(),carregarKPIs()]);
+    setTimeout(()=>{ document.getElementById('modal-overlay').classList.remove('open'); },1200);
+
+  } catch(e){
+    showMsg('msg-modal','Erro ao salvar. CNPJ pode já estar cadastrado.','error');
+  } finally {
+    btn.disabled=false; btn.textContent='Cadastrar Parceiro';
+  }
 }
 </script>
 </body>
