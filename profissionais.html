@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gestão de Profissionais — SESI Esporte</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --red:#C8102E;--red-d:#9B0D22;--red-light:rgba(200,16,46,0.08);
+  --dark:#0D0D0D;--dark2:#161616;--dark3:#1E1E1E;--dark4:#252525;
+  --border:#2A2A2A;--border2:#333;
+  --text:#E8E8E8;--text2:#A0A0A0;--text3:#555;
+  --white:#FFFFFF;
+  --green:#22C55E;--green-bg:rgba(34,197,94,0.1);
+  --amber:#F59E0B;--amber-bg:rgba(245,158,11,0.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);display:flex;flex-direction:column;}
+
+/* ── TOPBAR ── */
+.topbar{
+  height:58px;flex-shrink:0;
+  background:var(--dark2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;gap:16px;
+}
+.topbar-left{display:flex;align-items:center;gap:14px;min-width:0;}
+.logo-badge{
+  width:32px;height:32px;background:var(--red);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:13px;color:white;
+  clip-path:polygon(0 0,88% 0,100% 12%,100% 100%,12% 100%,0 88%);
+}
+.topbar-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;color:var(--white);white-space:nowrap;}
+.topbar-title span{color:var(--red);}
+.topbar-divider{width:1px;height:18px;background:var(--border2);flex-shrink:0;}
+.parceiro-badge{
+  display:flex;align-items:center;gap:8px;min-width:0;
+}
+.parceiro-badge-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px;}
+.parceiro-badge-cnpj{font-size:11px;color:var(--text3);white-space:nowrap;}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.btn-sair{
+  padding:6px 14px;background:transparent;border:1px solid var(--border2);border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:1px;
+  text-transform:uppercase;color:var(--text3);cursor:pointer;transition:all 0.15s;
+}
+.btn-sair:hover{border-color:var(--text2);color:var(--text2);}
+
+/* ── LAYOUT ── */
+.layout{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.main{flex:1;overflow-y:auto;padding:28px;}
+.main::-webkit-scrollbar{width:5px;}
+.main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ── HEADER SECTION ── */
+.section-head{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:24px;gap:16px;flex-wrap:wrap;
+}
+.section-head-left{}
+.section-tag{
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--red);margin-bottom:6px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-tag::before{content:'';width:14px;height:1px;background:var(--red);}
+.section-h{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:var(--white);line-height:1;}
+.section-desc{font-size:13px;color:var(--text2);margin-top:6px;}
+
+/* ── STATS ROW ── */
+.stats-row{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;}
+.stat-card{
+  background:var(--dark2);border:1px solid var(--border);border-radius:4px;
+  padding:14px 18px;display:flex;flex-direction:column;gap:3px;min-width:120px;
+  position:relative;overflow:hidden;
+}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-card.neutral::before{background:var(--border2);}
+.stat-card.success::before{background:var(--green);}
+.stat-card.warning::before{background:var(--amber);}
+.stat-card.danger::before{background:var(--red);}
+.stat-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);}
+.stat-value{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--white);line-height:1;}
+.stat-card.success .stat-value{color:var(--green);}
+.stat-card.warning .stat-value{color:var(--amber);}
+.stat-card.danger .stat-value{color:var(--red);}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text3);}
+.search-wrap input{
+  width:100%;background:var(--dark2);border:1px solid var(--border);border-radius:3px;
+  padding:8px 14px 8px 33px;font-family:'DM Sans',sans-serif;font-size:13px;
+  color:var(--text);outline:none;transition:border-color 0.15s;
+}
+.search-wrap input:focus{border-color:var(--red);}
+.search-wrap input::placeholder{color:var(--text3);}
+.filter-select{
+  background:var(--dark2);border:1px solid var(--border);border-radius:3px;
+  padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:12px;
+  color:var(--text2);outline:none;cursor:pointer;appearance:none;transition:border-color 0.15s;
+}
+.filter-select:focus{border-color:var(--red);}
+.filter-select option{background:var(--dark3);}
+.results-count{font-size:11px;color:var(--text3);white-space:nowrap;}
+.btn-novo{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;background:var(--red);border:none;border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  letter-spacing:1px;text-transform:uppercase;color:white;cursor:pointer;
+  transition:background 0.15s;white-space:nowrap;
+}
+.btn-novo:hover{background:var(--red-d);}
+
+/* ── CARDS GRID ── */
+.profs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.prof-card{
+  background:var(--dark2);border:1px solid var(--border);border-radius:4px;
+  padding:18px;transition:border-color 0.15s;position:relative;
+}
+.prof-card:hover{border-color:var(--border2);}
+.prof-card.curso-ok{border-color:rgba(34,197,94,0.2);}
+
+.prof-card-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.prof-avatar{
+  width:42px;height:42px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:16px;
+  background:var(--dark3);border:1px solid var(--border2);color:var(--text2);
+}
+.prof-card.curso-ok .prof-avatar{background:var(--green-bg);border-color:rgba(34,197,94,0.3);color:var(--green);}
+.prof-card-info{flex:1;min-width:0;}
+.prof-name{font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prof-funcao{font-size:11px;color:var(--text3);margin-top:2px;}
+
+.prof-card-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.prof-meta-item{}
+.prof-meta-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:2px;}
+.prof-meta-value{font-size:12px;color:var(--text2);}
+
+.curso-progress{margin-bottom:14px;}
+.curso-progress-label{display:flex;justify-content:space-between;margin-bottom:5px;}
+.curso-progress-label span{font-size:10px;color:var(--text3);}
+.curso-progress-label strong{font-size:10px;color:var(--text2);}
+.progress-track{height:3px;background:var(--border2);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:2px;transition:width 0.4s ease;}
+.progress-fill.done{background:var(--green);}
+.progress-fill.partial{background:var(--amber);}
+.progress-fill.none{background:var(--border2);}
+
+.curso-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:2px;font-size:10px;font-weight:500;
+}
+.badge-ok{background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,0.25);}
+.badge-parcial{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,158,11,0.25);}
+.badge-nao{background:var(--dark4);color:var(--text3);border:1px solid var(--border2);}
+
+.prof-card-actions{
+  display:flex;gap:7px;padding-top:12px;border-top:1px solid var(--border);
+}
+.btn-action{
+  flex:1;padding:7px;background:transparent;
+  border:1px solid var(--border2);border-radius:2px;
+  font-family:'DM Sans',sans-serif;font-size:11px;
+  color:var(--text2);cursor:pointer;transition:all 0.15s;text-align:center;
+}
+.btn-action:hover{border-color:var(--text2);color:var(--text);}
+.btn-action.danger:hover{border-color:#ff4444;color:#ff4444;}
+
+.empty-state{text-align:center;padding:56px 24px;}
+.empty-icon{font-size:36px;margin-bottom:12px;opacity:0.2;}
+.empty-text{font-size:14px;color:var(--text3);}
+.empty-sub{font-size:12px;color:var(--text3);margin-top:4px;}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.75);
+  z-index:100;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.2s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--dark2);border:1px solid var(--border);border-radius:6px;
+  width:500px;max-width:95vw;max-height:92vh;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.modal-head{
+  padding:18px 22px;border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;
+}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--white);}
+.modal-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.modal-close{background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:2px 6px;transition:color 0.15s;line-height:1;}
+.modal-close:hover{color:var(--text);}
+.modal-body{flex:1;overflow-y:auto;padding:20px 22px;}
+.modal-body::-webkit-scrollbar{width:4px;}
+.modal-body::-webkit-scrollbar-thumb{background:var(--border2);}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field.span2{grid-column:span 2;}
+.field label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);}
+.field input,.field select{
+  background:var(--dark3);border:1px solid var(--border2);border-radius:3px;
+  padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;
+  color:var(--text);outline:none;transition:border-color 0.15s;appearance:none;
+}
+.field input::placeholder{color:var(--text3);}
+.field input:focus,.field select:focus{border-color:var(--red);}
+.field select option{background:var(--dark3);}
+.field-hint{font-size:11px;color:var(--text3);}
+
+.btn-primary{
+  flex:1;padding:10px;background:var(--red);border:none;border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  letter-spacing:1.5px;text-transform:uppercase;color:white;cursor:pointer;transition:background 0.15s;
+}
+.btn-primary:hover{background:var(--red-d);}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-ghost{
+  padding:10px 16px;background:transparent;border:1px solid var(--border2);border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:11px;color:var(--text2);cursor:pointer;transition:all 0.15s;
+}
+.btn-ghost:hover{border-color:var(--text2);}
+
+.msg{padding:10px 13px;border-radius:3px;font-size:12px;margin-top:10px;display:none;line-height:1.5;}
+.msg.show{display:block;}
+.msg.success{background:var(--green-bg);border-left:3px solid var(--green);color:#86efac;}
+.msg.error{background:rgba(255,68,68,0.1);border-left:3px solid #ff4444;color:#ff8888;}
+.msg.info{background:var(--red-light);border-left:3px solid var(--red);color:var(--text);}
+
+/* ── CONFIRM MODAL ── */
+.confirm-box{
+  background:var(--dark2);border:1px solid var(--border);border-radius:6px;
+  width:380px;max-width:95vw;padding:28px;
+}
+.confirm-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--white);margin-bottom:8px;}
+.confirm-sub{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:20px;}
+.confirm-actions{display:flex;gap:8px;justify-content:flex-end;}
+.btn-danger{
+  padding:9px 20px;background:rgba(255,68,68,0.15);border:1px solid rgba(255,68,68,0.3);
+  border-radius:3px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  letter-spacing:1px;text-transform:uppercase;color:#ff6b6b;cursor:pointer;transition:all 0.15s;
+}
+.btn-danger:hover{background:rgba(255,68,68,0.25);}
+
+@media(max-width:768px){
+  .main{padding:16px;}
+  .profs-grid{grid-template-columns:1fr;}
+  .form-grid{grid-template-columns:1fr;}
+  .field.span2{grid-column:span 1;}
+  .topbar{padding:0 16px;}
+}
+
+/* ── BANNER GESTOR ── */
+.gestor-banner{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;border-radius:4px;margin-bottom:20px;
+  border:1px solid;
+}
+.gestor-banner.pendente{
+  background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.25);
+}
+.gestor-banner.sem-cpf{
+  background:rgba(200,16,46,0.06);border-color:rgba(200,16,46,0.2);
+}
+.gestor-banner.ok{
+  background:rgba(34,197,94,0.06);border-color:rgba(34,197,94,0.2);
+}
+.gestor-banner-icon{
+  width:36px;height:36px;flex-shrink:0;border-radius:3px;
+  display:flex;align-items:center;justify-content:center;
+}
+.gestor-banner.pendente .gestor-banner-icon{background:var(--amber-bg);color:var(--amber);}
+.gestor-banner.sem-cpf .gestor-banner-icon{background:var(--red-light);color:var(--red);}
+.gestor-banner.ok .gestor-banner-icon{background:var(--green-bg);color:var(--green);}
+.gestor-banner-text{flex:1;}
+.gestor-banner-text strong{display:block;font-size:13px;font-weight:500;color:var(--text);}
+.gestor-banner-text span{font-size:12px;color:var(--text2);}
+.gestor-banner-btn{
+  padding:7px 16px;border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+  transition:all 0.15s;white-space:nowrap;flex-shrink:0;border:none;
+}
+.gestor-banner.pendente .gestor-banner-btn{background:var(--amber);color:var(--dark);}
+.gestor-banner.sem-cpf .gestor-banner-btn{background:var(--red);color:white;}
+.gestor-banner.ok .gestor-banner-btn{background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,0.3);}
+
+/* Card especial gestor */
+.prof-card.gestor{
+  border-color:rgba(200,16,46,0.2);
+  background:rgba(200,16,46,0.03);
+}
+.prof-card.gestor .prof-avatar{
+  background:rgba(200,16,46,0.1);border-color:rgba(200,16,46,0.3);color:var(--red);
+}
+.gestor-tag{
+  font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--red);margin-top:2px;
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-badge">SE</div>
+    <div class="topbar-title">SESI <span>ESPORTE</span></div>
+    <div class="topbar-divider"></div>
+    <div class="parceiro-badge">
+      <span class="parceiro-badge-name" id="tb-razao">—</span>
+      <span class="parceiro-badge-cnpj" id="tb-cnpj">—</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </div>
+</div>
+
+<div class="layout">
+<main class="main">
+
+  <!-- HEADER -->
+  <div class="section-head">
+    <div class="section-head-left">
+      <div class="section-tag">Gestão de Equipe</div>
+      <div class="section-h">Profissionais</div>
+      <div class="section-desc">Gerencie os professores e gestores vinculados ao seu parceiro.</div>
+    </div>
+    <button class="btn-novo" onclick="abrirModal()">+ Novo Profissional</button>
+  </div>
+
+  <!-- BANNER GESTOR -->
+  <div id="banner-gestor" style="display:none;"></div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card neutral">
+      <div class="stat-label">Total</div>
+      <div class="stat-value" id="s-total">—</div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-label">Curso Concluído</div>
+      <div class="stat-value" id="s-ok">—</div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-label">Em Andamento</div>
+      <div class="stat-value" id="s-parcial">—</div>
+    </div>
+    <div class="stat-card danger">
+      <div class="stat-label">Não Iniciado</div>
+      <div class="stat-value" id="s-nao">—</div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="search" placeholder="Buscar por nome, CPF, função..." oninput="filtrar()"/>
+    </div>
+    <select class="filter-select" id="filter-curso" onchange="filtrar()">
+      <option value="">Todos os status</option>
+      <option value="ok">Curso concluído</option>
+      <option value="parcial">Em andamento</option>
+      <option value="nao">Não iniciado</option>
+    </select>
+    <select class="filter-select" id="filter-funcao" onchange="filtrar()">
+      <option value="">Todas as funções</option>
+      <option value="Parceiro Gestor">Parceiro Gestor</option>
+      <option value="Professor(a)">Professor(a)</option>
+      <option value="Gestor(a)">Gestor(a)</option>
+      <option value="Coordenador(a)">Coordenador(a)</option>
+    </select>
+    <span class="results-count" id="results-count"></span>
+  </div>
+
+  <!-- GRID -->
+  <div class="profs-grid" id="profs-grid"></div>
+  <div class="empty-state" id="empty-state" style="display:none;">
+    <div class="empty-icon">◎</div>
+    <div class="empty-text">Nenhum profissional encontrado</div>
+    <div class="empty-sub">Clique em "+ Novo Profissional" para adicionar</div>
+  </div>
+
+</main>
+</div>
+
+<!-- MODAL NOVO/EDITAR -->
+<div class="modal-overlay" id="modal-overlay" onclick="fecharModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="modal-title">Novo Profissional</div>
+        <div class="modal-sub">Preencha os dados para cadastrar no sistema</div>
+      </div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field span2">
+          <label>Nome Completo</label>
+          <input type="text" id="f-nome" placeholder="Nome completo do profissional"/>
+        </div>
+        <div class="field">
+          <label>CPF</label>
+          <input type="text" id="f-cpf" placeholder="00000000000" maxlength="11"
+            oninput="this.value=this.value.replace(/\D/g,'')"/>
+          <div class="field-hint">Somente números</div>
+        </div>
+        <div class="field">
+          <label>Data de Nascimento</label>
+          <input type="date" id="f-nasc"/>
+        </div>
+        <div class="field span2">
+          <label>E-mail</label>
+          <input type="email" id="f-email" placeholder="email@profissional.com"/>
+        </div>
+        <div class="field">
+          <label>Função no SIPAF</label>
+          <select id="f-funcao">
+            <option value="">Selecione...</option>
+            <option value="Parceiro Gestor">Parceiro Gestor</option>
+            <option value="Professor(a)">Professor(a)</option>
+            <option value="Gestor(a)">Gestor(a)</option>
+            <option value="Coordenador(a)">Coordenador(a)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>CREF</label>
+          <input type="text" id="f-cref" placeholder="CREF (se houver)"/>
+        </div>
+      </div>
+      <div class="msg" id="msg-modal"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" id="btn-salvar" onclick="salvarProfissional()">Cadastrar</button>
+      <button class="btn-ghost" onclick="fecharModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR REMOÇÃO -->
+<div class="modal-overlay" id="confirm-overlay" onclick="fecharConfirm(event)">
+  <div class="confirm-box" onclick="event.stopPropagation()">
+    <div class="confirm-title">Remover Profissional</div>
+    <div class="confirm-sub">Tem certeza que deseja remover <strong id="confirm-nome"></strong>? O progresso do curso será mantido, mas o acesso ao sistema será revogado.</div>
+    <div class="confirm-actions">
+      <button class="btn-ghost" onclick="fecharConfirm()">Cancelar</button>
+      <button class="btn-danger" id="btn-confirmar-remover" onclick="confirmarRemover()">Remover</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://lluujmxlmcdvyvkrmbup.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_9Mlzq2DrX8jp6rQpw0TyRg_9YFw__Wn';
+const H = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`};
+
+let parceiro = null;
+let todosProfissionais = [];
+let progressoMap = {};
+let editandoId = null;
+let removendoId = null;
+
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  const s = localStorage.getItem('sesi_parceiro');
+  if (!s) { window.location.href='index.html'; return; }
+  parceiro = JSON.parse(s);
+
+  document.getElementById('tb-razao').textContent = parceiro.razao_social || '—';
+  document.getElementById('tb-cnpj').textContent = fmtCNPJ(parceiro.cnpj || '');
+
+  await carregarProfissionais();
+  verificarBannerGestor();
+});
+
+// ── BANNER GESTOR ─────────────────────────────────────────────
+function verificarBannerGestor() {
+  const banner = document.getElementById('banner-gestor');
+
+  // Buscar se gestor tem CPF cadastrado (Parceiro Gestor)
+  const gestor = todosProfissionais.find(p => p.funcao_sipaf === 'Parceiro Gestor');
+
+  if (!gestor) {
+    // Sem CPF cadastrado
+    banner.className = 'gestor-banner sem-cpf';
+    banner.style.display = 'flex';
+    banner.innerHTML = `
+      <div class="gestor-banner-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.3" fill="none"/>
+          <path d="M9 6v3M9 12v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="gestor-banner-text">
+        <strong>Cadastre seus dados para acessar o curso</strong>
+        <span>Como gestor, você também precisa concluir o Módulo M1. Cadastre seu CPF para liberar o acesso.</span>
+      </div>
+      <button class="gestor-banner-btn" onclick="abrirModalGestor()">Cadastrar CPF</button>`;
+    return;
+  }
+
+  const concl = progressoMap[gestor.cpf] || 0;
+
+  if (concl >= 4) {
+    // Curso concluído
+    banner.className = 'gestor-banner ok';
+    banner.style.display = 'flex';
+    banner.innerHTML = `
+      <div class="gestor-banner-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.3" fill="none"/>
+          <path d="M6 9l2 2 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="gestor-banner-text">
+        <strong>Módulo M1 concluído</strong>
+        <span>Parabéns! Você concluiu o curso obrigatório.</span>
+      </div>
+      <button class="gestor-banner-btn" onclick="window.location.href='curso.html'">Rever curso</button>`;
+  } else {
+    // Curso pendente
+    const pct = Math.round(concl/4*100);
+    banner.className = 'gestor-banner pendente';
+    banner.style.display = 'flex';
+    banner.innerHTML = `
+      <div class="gestor-banner-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.3" fill="none"/>
+          <path d="M9 5v4l2.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="gestor-banner-text">
+        <strong>Curso obrigatório pendente${concl>0?' — '+pct+'% concluído':''}</strong>
+        <span>Você precisa concluir o Módulo M1 para formalizar a parceria.</span>
+      </div>
+      <button class="gestor-banner-btn" onclick="window.location.href='curso.html'">Acessar Curso →</button>`;
+  }
+}
+
+function abrirModalGestor() {
+  // Abre modal pré-preenchido com nome do responsável e função Parceiro Gestor
+  editandoId = null;
+  document.getElementById('modal-title').textContent = 'Seu Cadastro como Gestor';
+  document.getElementById('btn-salvar').textContent = 'Salvar e Acessar Curso';
+  document.getElementById('f-nome').value = parceiro.nome || '';
+  document.getElementById('f-cpf').value = '';
+  document.getElementById('f-email').value = '';
+  document.getElementById('f-nasc').value = '';
+  document.getElementById('f-funcao').value = 'Parceiro Gestor';
+  document.getElementById('f-cref').value = '';
+  hideMsg('msg-modal');
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+// ── DADOS ─────────────────────────────────────────────────────
+async function carregarProfissionais() {
+  try {
+    const [rS, rPC] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/acesso_sipaf?parceiro_id=eq.${parceiro.id}&select=*&order=nome.asc`, {headers:H}),
+      fetch(`${SUPABASE_URL}/rest/v1/progresso_curso?parceiro_id=eq.${parceiro.id}&select=cpf,aula_id,concluida`, {headers:H})
+    ]);
+    todosProfissionais = await rS.json();
+    const prog = await rPC.json();
+
+    // Mapear progresso por CPF
+    progressoMap = {};
+    prog.forEach(p => {
+      if (!progressoMap[p.cpf]) progressoMap[p.cpf] = 0;
+      if (p.concluida) progressoMap[p.cpf]++;
+    });
+
+    calcularStats();
+    filtrar();
+  } catch(e) { console.error(e); }
+}
+
+function calcularStats() {
+  const total = todosProfissionais.length;
+  const ok = todosProfissionais.filter(p => (progressoMap[p.cpf]||0) >= 4).length;
+  const parcial = todosProfissionais.filter(p => { const c=progressoMap[p.cpf]||0; return c>0&&c<4; }).length;
+  const nao = todosProfissionais.filter(p => (progressoMap[p.cpf]||0) === 0).length;
+
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-ok').textContent = ok;
+  document.getElementById('s-parcial').textContent = parcial;
+  document.getElementById('s-nao').textContent = nao;
+}
+
+// ── FILTRO ────────────────────────────────────────────────────
+function filtrar() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const curso = document.getElementById('filter-curso').value;
+  const funcao = document.getElementById('filter-funcao').value;
+
+  const lista = todosProfissionais.filter(p => {
+    const concl = progressoMap[p.cpf] || 0;
+    const statusCurso = concl >= 4 ? 'ok' : concl > 0 ? 'parcial' : 'nao';
+
+    const matchQ = !q || p.nome?.toLowerCase().includes(q) || p.cpf?.includes(q) || p.funcao_sipaf?.toLowerCase().includes(q);
+    const matchC = !curso || statusCurso === curso;
+    const matchF = !funcao || p.funcao_sipaf === funcao;
+    return matchQ && matchC && matchF;
+  });
+
+  document.getElementById('results-count').textContent = `${lista.length} profissional${lista.length!==1?'is':''}`;
+  renderCards(lista);
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function renderCards(lista) {
+  const grid = document.getElementById('profs-grid');
+  const empty = document.getElementById('empty-state');
+
+  if (!lista.length) { grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+
+  // Gestor primeiro, resto por nome
+  const sorted = [
+    ...lista.filter(p => p.funcao_sipaf === 'Parceiro Gestor'),
+    ...lista.filter(p => p.funcao_sipaf !== 'Parceiro Gestor')
+  ];
+
+  grid.innerHTML = sorted.map(p => {
+    const isGestor = p.funcao_sipaf === 'Parceiro Gestor';
+    const concl = progressoMap[p.cpf] || 0;
+    const pct = Math.round(concl/4*100);
+    const statusCurso = concl >= 4 ? 'ok' : concl > 0 ? 'parcial' : 'nao';
+    const badgeClass = statusCurso==='ok' ? 'badge-ok' : statusCurso==='parcial' ? 'badge-parcial' : 'badge-nao';
+    const badgeLabel = statusCurso==='ok' ? '✓ Curso concluído' : statusCurso==='parcial' ? `${concl}/4 aulas` : 'Não iniciado';
+    const fillClass = statusCurso==='ok' ? 'done' : statusCurso==='parcial' ? 'partial' : 'none';
+    const initials = p.nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+
+    return `<div class="prof-card ${statusCurso==='ok'&&!isGestor?'curso-ok':''} ${isGestor?'gestor':''}">
+      <div class="prof-card-head">
+        <div class="prof-avatar">${initials}</div>
+        <div class="prof-card-info">
+          <div class="prof-name">${p.nome}</div>
+          <div class="prof-funcao">${p.funcao_sipaf||'—'}${isGestor?'<span class="gestor-tag"> · Responsável</span>':''}</div>
+        </div>
+        <span class="curso-badge ${badgeClass}">${badgeLabel}</span>
+      </div>
+
+      <div class="prof-card-meta">
+        <div class="prof-meta-item">
+          <div class="prof-meta-label">CPF</div>
+          <div class="prof-meta-value">${fmtCPF(p.cpf)}</div>
+        </div>
+        <div class="prof-meta-item">
+          <div class="prof-meta-label">CREF</div>
+          <div class="prof-meta-value">${p.cref||'—'}</div>
+        </div>
+        <div class="prof-meta-item">
+          <div class="prof-meta-label">E-mail</div>
+          <div class="prof-meta-value" style="word-break:break-all;">${p.email||'—'}</div>
+        </div>
+        <div class="prof-meta-item">
+          <div class="prof-meta-label">Cadastrado em</div>
+          <div class="prof-meta-value">${fmtDate(p.criado_em)}</div>
+        </div>
+      </div>
+
+      <div class="curso-progress">
+        <div class="curso-progress-label">
+          <span>Progresso do curso</span>
+          <strong>${pct}%</strong>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill ${fillClass}" style="width:${pct}%"></div>
+        </div>
+      </div>
+
+      <div class="prof-card-actions">
+        <button class="btn-action" onclick="editarProfissional('${p.id}')">Editar</button>
+        ${!isGestor ? `<button class="btn-action danger" onclick="pedirRemover('${p.id}','${p.nome.replace(/'/g,"\\'")}')">Remover</button>` : ''}
+        ${isGestor && concl < 4 ? `<button class="btn-action" style="border-color:var(--amber);color:var(--amber);" onclick="window.location.href='curso.html'">Acessar Curso →</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── MODAL ─────────────────────────────────────────────────────
+function abrirModal(id) {
+  editandoId = null;
+  document.getElementById('modal-title').textContent = 'Novo Profissional';
+  document.getElementById('btn-salvar').textContent = 'Cadastrar';
+  ['f-nome','f-cpf','f-email','f-cref'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('f-nasc').value='';
+  document.getElementById('f-funcao').value='';
+  hideMsg('msg-modal');
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function editarProfissional(id) {
+  const p = todosProfissionais.find(x => x.id === id);
+  if (!p) return;
+  editandoId = id;
+  document.getElementById('modal-title').textContent = 'Editar Profissional';
+  document.getElementById('btn-salvar').textContent = 'Salvar Alterações';
+  document.getElementById('f-nome').value = p.nome||'';
+  document.getElementById('f-cpf').value = p.cpf||'';
+  document.getElementById('f-email').value = p.email||'';
+  document.getElementById('f-cref').value = p.cref||'';
+  document.getElementById('f-nasc').value = p.data_nascimento||'';
+  document.getElementById('f-funcao').value = p.funcao_sipaf||'';
+  hideMsg('msg-modal');
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function fecharModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay'))
+    document.getElementById('modal-overlay').classList.remove('open');
+}
+
+async function salvarProfissional() {
+  const nome  = document.getElementById('f-nome').value.trim();
+  const cpf   = document.getElementById('f-cpf').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const nasc  = document.getElementById('f-nasc').value;
+  const func  = document.getElementById('f-funcao').value;
+  const cref  = document.getElementById('f-cref').value.trim();
+
+  if (!nome || !cpf) { showMsg('msg-modal','Nome e CPF são obrigatórios.','error'); return; }
+  if (cpf.length !== 11) { showMsg('msg-modal','CPF deve ter 11 dígitos.','error'); return; }
+
+  const btn = document.getElementById('btn-salvar');
+  btn.disabled = true;
+  hideMsg('msg-modal');
+
+  try {
+    const body = {
+      nome, cpf,
+      email: email||null,
+      data_nascimento: nasc||null,
+      funcao_sipaf: func||null,
+      cref: cref||null,
+      atualizado_em: new Date().toISOString()
+    };
+
+    if (editandoId) {
+      await fetch(`${SUPABASE_URL}/rest/v1/acesso_sipaf?id=eq.${editandoId}`, {
+        method:'PATCH', headers:H, body:JSON.stringify(body)
+      });
+      showMsg('msg-modal','Profissional atualizado!','success');
+    } else {
+      // Verificar duplicata de CPF no parceiro
+      const rCheck = await fetch(
+        `${SUPABASE_URL}/rest/v1/acesso_sipaf?parceiro_id=eq.${parceiro.id}&cpf=eq.${cpf}&select=id`,
+        {headers:H}
+      );
+      const existe = await rCheck.json();
+      if (existe.length) { showMsg('msg-modal','Este CPF já está cadastrado neste parceiro.','error'); btn.disabled=false; return; }
+
+      await fetch(`${SUPABASE_URL}/rest/v1/acesso_sipaf`, {
+        method:'POST', headers:H,
+        body: JSON.stringify({ ...body, parceiro_id: parceiro.id })
+      });
+      showMsg('msg-modal','Profissional cadastrado!','success');
+    }
+
+    await carregarProfissionais();
+    verificarBannerGestor();
+    const isGestor = func === 'Parceiro Gestor' && !editandoId;
+    if (isGestor) {
+      showMsg('msg-modal','Cadastro salvo! Redirecionando para o curso...','success');
+      setTimeout(() => window.location.href='curso.html', 1200);
+    } else {
+      setTimeout(() => document.getElementById('modal-overlay').classList.remove('open'), 1000);
+    }
+
+  } catch(e) {
+    showMsg('msg-modal','Erro ao salvar. Tente novamente.','error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ── REMOÇÃO ───────────────────────────────────────────────────
+function pedirRemover(id, nome) {
+  removendoId = id;
+  document.getElementById('confirm-nome').textContent = nome;
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+
+function fecharConfirm(e) {
+  if (!e || e.target === document.getElementById('confirm-overlay'))
+    document.getElementById('confirm-overlay').classList.remove('open');
+}
+
+async function confirmarRemover() {
+  if (!removendoId) return;
+  const btn = document.getElementById('btn-confirmar-remover');
+  btn.disabled = true; btn.textContent = 'Removendo...';
+
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/acesso_sipaf?id=eq.${removendoId}`, {
+      method:'DELETE', headers:H
+    });
+    fecharConfirm();
+    await carregarProfissionais();
+  } catch(e) {
+    alert('Erro ao remover. Tente novamente.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Remover';
+    removendoId = null;
+  }
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+function fmtCNPJ(c){ c=(c||'').replace(/\D/g,''); return c.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5')||c; }
+function fmtCPF(c){ c=(c||'').replace(/\D/g,''); return c.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/,'$1.$2.$3-$4')||c; }
+function fmtDate(d){ if(!d) return '—'; return new Date(d).toLocaleDateString('pt-BR'); }
+function showMsg(id,text,type){ const el=document.getElementById(id); el.textContent=text; el.className=`msg ${type} show`; }
+function hideMsg(id){ document.getElementById(id).className='msg'; }
+function sair(){ localStorage.removeItem('sesi_parceiro'); window.location.href='index.html'; }
+</script>
+</body>
+</html>

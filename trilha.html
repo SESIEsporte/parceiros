@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Trilha do Parceiro — SESI Esporte</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet"/>
+<script src="unidades.js"></script>
 <style>
 :root {
   --red:#C8102E; --red-d:#9B0D22; --red-light:rgba(200,16,46,0.1);
@@ -505,6 +506,12 @@ input[type=file]{display:none;}
         <div class="card-title">Dados do Parceiro</div>
         <div class="form-grid">
           <div class="field span2">
+            <label>Unidade SESI (CAT)</label>
+            <select id="doc-unidade">
+              <option value="">Selecione a unidade SESI...</option>
+            </select>
+          </div>
+          <div class="field span2">
             <label>Tipo de Parceiro</label>
             <select id="doc-tipo" onchange="toggleTipo()">
               <option value="">Selecione...</option>
@@ -780,6 +787,12 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sb-nome').textContent = parceiro.nome || parceiro.nome_responsavel || '—';
   document.getElementById('sb-cnpj').textContent = fmtCNPJ(parceiro.cnpj || '');
 
+  // Popular select de unidades
+  const selUnidade = document.getElementById('doc-unidade');
+  if (selUnidade && typeof UNIDADES_SESI !== 'undefined') {
+    selUnidade.innerHTML = unidadesOptions(parceiro.unidade_sesi || '');
+  }
+
   await carregarStatus();
   renderAulas();
   addGradeRow();
@@ -876,17 +889,19 @@ function maskTel(el) {
 
 // ─── SALVAR DOCS ──────────────────────────────────────────────
 async function salvarDocs() {
+  const unidade = document.getElementById('doc-unidade').value;
   const tipo = document.getElementById('doc-tipo').value;
   const telefone = document.getElementById('doc-telefone').value.trim();
   const email = document.getElementById('doc-email').value.trim();
 
+  if (!unidade) { showMsg('msg-docs','Selecione a unidade SESI.','error'); return; }
   if (!tipo) { showMsg('msg-docs','Selecione o tipo de parceiro.','error'); return; }
   hideMsg('msg-docs');
 
   try {
     await fetch(`${SUPABASE_URL}/rest/v1/parceiros?id=eq.${parceiro.id}`,{
       method:'PATCH', headers:H,
-      body: JSON.stringify({ tipo, telefone, email, etapa_documentos:true, atualizado_em:new Date().toISOString() })
+      body: JSON.stringify({ tipo, telefone, email, unidade_sesi: unidade, etapa_documentos:true, atualizado_em:new Date().toISOString() })
     });
 
     // Upload de arquivos para Supabase Storage
