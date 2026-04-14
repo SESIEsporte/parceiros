@@ -781,23 +781,161 @@ const AULAS = [
 // ─── INIT ─────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
   const s = localStorage.getItem('sesi_parceiro');
-  if (!s) { window.location.href='index.html'; return; }
-  parceiro = JSON.parse(s);
 
-  document.getElementById('sb-nome').textContent = parceiro.nome || parceiro.nome_responsavel || '—';
-  document.getElementById('sb-cnpj').textContent = fmtCNPJ(parceiro.cnpj || '');
+  if (!s) {
+    // Novo parceiro — mostra tela de identificação primeiro
+    parceiro = null;
+    document.getElementById('sb-nome').textContent = 'Novo Parceiro';
+    document.getElementById('sb-cnpj').textContent = '—';
+    mostrarIdentificacao();
+  } else {
+    parceiro = JSON.parse(s);
+    document.getElementById('sb-nome').textContent = parceiro.nome || parceiro.nome_responsavel || '—';
+    document.getElementById('sb-cnpj').textContent = fmtCNPJ(parceiro.cnpj || '');
+    // Popular select de unidades
+    const selUnidade = document.getElementById('doc-unidade');
+    if (selUnidade && typeof UNIDADES_SESI !== 'undefined') {
+      selUnidade.innerHTML = unidadesOptions(parceiro.unidade_sesi || '');
+    }
+    await carregarStatus();
+    renderAulas();
+    addGradeRow();
+    addSipafRow();
+  }
+});
 
-  // Popular select de unidades
-  const selUnidade = document.getElementById('doc-unidade');
-  if (selUnidade && typeof UNIDADES_SESI !== 'undefined') {
-    selUnidade.innerHTML = unidadesOptions(parceiro.unidade_sesi || '');
+// ─── TELA DE IDENTIFICAÇÃO (novo parceiro) ────────────────────
+function mostrarIdentificacao() {
+  // Injeta card de identificação no topo da etapa 1
+  const msgEl = document.getElementById('msg-docs');
+  const cardExistente = document.getElementById('card-identificacao');
+  if (cardExistente) return;
+
+  const card = document.createElement('div');
+  card.id = 'card-identificacao';
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-title">Identificação do Parceiro</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">
+      Para iniciar o cadastro, informe os dados básicos do seu parceiro.
+    </p>
+    <div class="form-grid">
+      <div class="field span2">
+        <label>Razão Social</label>
+        <input type="text" id="id-razao" placeholder="Nome da empresa ou prefeitura"/>
+      </div>
+      <div class="field">
+        <label>CNPJ</label>
+        <input type="text" id="id-cnpj" placeholder="00.000.000/0000-00" maxlength="18" oninput="maskCNPJ(this)"/>
+      </div>
+      <div class="field">
+        <label>Nome do Responsável</label>
+        <input type="text" id="id-nome" placeholder="Nome completo"/>
+      </div>
+    </div>
+    <div class="msg" id="msg-ident"></div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn-primary" onclick="criarParceiro()" style="max-width:200px;">Iniciar Cadastro →</button>
+    </div>`;
+
+  // Ocultar o resto da etapa 1 até identificação ser feita
+  msgEl.parentNode.insertBefore(card, msgEl);
+  document.querySelectorAll('#screen-0 .card:not(#card-identificacao), #screen-0 .btn-row:last-child')
+    .forEach(el => el.style.display = 'none');
+
+  // Popular unidades depois de criar o card
+  if (typeof UNIDADES_SESI !== 'undefined') {
+    document.getElementById('doc-unidade').innerHTML = unidadesOptions('');
+  }
+}
+
+function maskCNPJ(el) {
+  let v=el.value.replace(/\D/g,'').substring(0,14);
+  v=v.replace(/^(\d{2})(\d)/,'$1.$2');
+  v=v.replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3');
+  v=v.replace(/\.(\d{3})(\d)/,'.$1/$2');
+  v=v.replace(/(\d{4})(\d)/,'$1-$2');
+  el.value=v;
+}
+
+async function criarParceiro() {
+  const razao = document.getElementById('id-razao').value.trim();
+  const cnpjRaw = document.getElementById('id-cnpj').value.trim();
+  const nome  = document.getElementById('id-nome').value.trim();
+  const cnpj  = cnpjRaw.replace(/\D/g,'');
+  const msgEl = document.getElementById('msg-ident');
+
+  msgEl.className = 'msg';
+
+  if (!razao || !cnpj || !nome) {
+    msgEl.textContent = 'Preencha todos os campos.';
+    msgEl.className = 'msg error show'; return;
+  }
+  if (cnpj.length !== 14) {
+    msgEl.textContent = 'CNPJ inválido.';
+    msgEl.className = 'msg error show'; return;
   }
 
-  await carregarStatus();
-  renderAulas();
-  addGradeRow();
-  addSipafRow();
-});
+  const btn = document.querySelector('#card-identificacao .btn-primary');
+  btn.disabled = true; btn.textContent = 'Verificando...';
+
+  try {
+    // Verificar se CNPJ já existe
+    const check = await fetch(
+      `${SUPABASE_URL}/rest/v1/parceiros?cnpj=eq.${cnpj}&select=id,razao_social,nome_responsavel,status`,
+      {headers:H}
+    );
+    const existe = await check.json();
+
+    if (existe.length) {
+      const p = existe[0];
+      // Validar dados
+      if (p.razao_social.toLowerCase() !== razao.toLowerCase() ||
+          p.nome_responsavel.toLowerCase() !== nome.toLowerCase()) {
+        msgEl.textContent = 'CNPJ já cadastrado com dados diferentes. Verifique com seu orientador.';
+        msgEl.className = 'msg error show';
+        btn.disabled = false; btn.textContent = 'Iniciar Cadastro →'; return;
+      }
+      // Retomar cadastro existente
+      parceiro = { id: p.id, nome, razao_social: razao, cnpj };
+    } else {
+      // Criar novo parceiro
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/parceiros`, {
+        method:'POST',
+        headers:{...H,'Prefer':'return=representation'},
+        body: JSON.stringify({ razao_social:razao, cnpj, nome_responsavel:nome })
+      });
+      const novo = await res.json();
+      parceiro = { id: novo[0].id, nome, razao_social: razao, cnpj };
+    }
+
+    localStorage.setItem('sesi_parceiro', JSON.stringify(parceiro));
+
+    // Atualizar sidebar
+    document.getElementById('sb-nome').textContent = nome;
+    document.getElementById('sb-cnpj').textContent = fmtCNPJ(cnpj);
+
+    // Popular unidades e mostrar o resto da etapa
+    if (typeof UNIDADES_SESI !== 'undefined') {
+      document.getElementById('doc-unidade').innerHTML = unidadesOptions('');
+    }
+
+    // Remover card de identificação e mostrar formulário completo
+    document.getElementById('card-identificacao').remove();
+    document.querySelectorAll('#screen-0 .card, #screen-0 .btn-row:last-child')
+      .forEach(el => el.style.display = '');
+
+    await carregarStatus();
+    renderAulas();
+    addGradeRow();
+    addSipafRow();
+
+  } catch(e) {
+    msgEl.textContent = 'Erro ao conectar. Tente novamente.';
+    msgEl.className = 'msg error show';
+    btn.disabled = false; btn.textContent = 'Iniciar Cadastro →';
+  }
+}
 
 function fmtCNPJ(c) {
   c = c.replace(/\D/g,'');
