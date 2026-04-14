@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard Orientador — SESI Esporte</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --red:#C8102E; --red-d:#9B0D22; --red-light:rgba(200,16,46,0.08);
+  --dark:#0D0D0D; --dark2:#161616; --dark3:#1E1E1E; --dark4:#252525;
+  --border:#2A2A2A; --border2:#333;
+  --text:#E8E8E8; --text2:#A0A0A0; --text3:#555;
+  --white:#FFFFFF;
+  --green:#22C55E; --green-bg:rgba(34,197,94,0.1);
+  --amber:#F59E0B; --amber-bg:rgba(245,158,11,0.1);
+  --orange:#F97316; --orange-bg:rgba(249,115,22,0.1);
+  --drawer:460px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);display:flex;flex-direction:column;}
+
+/* ── TOPBAR ── */
+.topbar{
+  height:60px;flex-shrink:0;
+  background:var(--dark2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+}
+.topbar-left{display:flex;align-items:center;gap:16px;}
+.logo-badge{
+  width:34px;height:34px;background:var(--red);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:14px;color:white;
+  clip-path:polygon(0 0,88% 0,100% 12%,100% 100%,12% 100%,0 88%);
+  flex-shrink:0;
+}
+.topbar-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--white);}
+.topbar-title span{color:var(--red);}
+.topbar-divider{width:1px;height:20px;background:var(--border2);}
+.orientador-info{font-size:13px;color:var(--text2);}
+.orientador-info strong{color:var(--text);font-weight:500;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.btn-sair{
+  padding:7px 16px;background:transparent;
+  border:1px solid var(--border2);border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;
+  color:var(--text3);cursor:pointer;transition:all 0.15s;
+}
+.btn-sair:hover{border-color:var(--text2);color:var(--text2);}
+
+/* ── LAYOUT ── */
+.layout{flex:1;display:flex;overflow:hidden;}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;padding:28px;}
+.main::-webkit-scrollbar{width:5px;}
+.main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:24px;}
+.kpi{
+  background:var(--dark2);border:1px solid var(--border);
+  border-radius:4px;padding:16px;position:relative;overflow:hidden;
+}
+.kpi::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+}
+.kpi.neutral::before{background:var(--border2);}
+.kpi.success::before{background:var(--green);}
+.kpi.warning::before{background:var(--amber);}
+.kpi.orange::before{background:var(--orange);}
+.kpi.danger::before{background:var(--red);}
+.kpi.info::before{background:#3B82F6;}
+
+.kpi-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+.kpi-value{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;color:var(--white);}
+.kpi.warning .kpi-value{color:var(--amber);}
+.kpi.orange .kpi-value{color:var(--orange);}
+.kpi.danger .kpi-value{color:var(--red);}
+.kpi.success .kpi-value{color:var(--green);}
+.kpi-sub{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* ── TOOLBAR ── */
+.toolbar{
+  display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;
+}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-wrap input{
+  width:100%;background:var(--dark2);border:1px solid var(--border);
+  border-radius:3px;padding:9px 14px 9px 36px;
+  font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;
+  transition:border-color 0.15s;
+}
+.search-wrap input:focus{border-color:var(--red);}
+.search-wrap input::placeholder{color:var(--text3);}
+.search-icon{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  font-size:13px;color:var(--text3);pointer-events:none;
+}
+.filter-select{
+  background:var(--dark2);border:1px solid var(--border);border-radius:3px;
+  padding:9px 14px;font-family:'DM Sans',sans-serif;font-size:13px;
+  color:var(--text2);outline:none;cursor:pointer;appearance:none;
+  min-width:160px;transition:border-color 0.15s;
+}
+.filter-select:focus{border-color:var(--red);}
+.filter-select option{background:var(--dark3);}
+.results-count{font-size:12px;color:var(--text3);white-space:nowrap;}
+
+/* ── TABLE ── */
+.table-card{
+  background:var(--dark2);border:1px solid var(--border);border-radius:4px;overflow:hidden;
+}
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{
+  background:var(--dark3);padding:11px 16px;
+  font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text3);text-align:left;border-bottom:1px solid var(--border2);
+  font-weight:500;white-space:nowrap;cursor:pointer;user-select:none;
+}
+.data-table th:hover{color:var(--text2);}
+.data-table th .sort-icon{margin-left:4px;opacity:0.4;}
+.data-table th.sorted .sort-icon{opacity:1;color:var(--red);}
+
+.data-table td{
+  padding:13px 16px;border-bottom:1px solid var(--border);
+  font-size:13px;vertical-align:middle;
+}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr{cursor:pointer;transition:background 0.1s;}
+.data-table tr:hover td{background:rgba(255,255,255,0.02);}
+.data-table tr.selected td{background:rgba(200,16,46,0.05);}
+
+.razao-social{font-weight:500;color:var(--text);}
+.cnpj-cell{font-size:12px;color:var(--text3);font-family:monospace;}
+
+/* ── ETAPAS PILLS ── */
+.etapas{display:flex;gap:4px;flex-wrap:wrap;}
+.etapa-dot{
+  width:8px;height:8px;border-radius:50%;
+  border:1px solid var(--border2);background:var(--dark4);
+  title:'';
+}
+.etapa-dot.ok{background:var(--green);border-color:var(--green);}
+
+/* ── STATUS BADGE ── */
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:2px;font-size:11px;font-weight:500;
+  white-space:nowrap;
+}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.badge-andamento{background:rgba(59,130,246,0.1);color:#60A5FA;border:1px solid rgba(59,130,246,0.2);}
+.badge-aguardando{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,158,11,0.2);}
+.badge-ativo{background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
+.badge-inativo{background:rgba(100,100,100,0.1);color:var(--text3);border:1px solid var(--border2);}
+
+/* ── ALERTA VENCIMENTO ── */
+.alerta{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:2px;font-size:11px;font-weight:500;
+}
+.alerta-ok{color:var(--text3);}
+.alerta-atencao{background:var(--amber-bg);color:var(--amber);}
+.alerta-urgente{background:var(--orange-bg);color:var(--orange);}
+.alerta-critico{background:rgba(200,16,46,0.1);color:var(--red);}
+
+.btn-detail{
+  padding:5px 12px;background:transparent;
+  border:1px solid var(--border2);border-radius:2px;
+  font-family:'DM Sans',sans-serif;font-size:11px;
+  color:var(--text2);cursor:pointer;transition:all 0.15s;
+  white-space:nowrap;
+}
+.btn-detail:hover{border-color:var(--red);color:var(--red);}
+
+/* ── EMPTY STATE ── */
+.empty{
+  text-align:center;padding:64px 24px;
+}
+.empty-icon{font-size:36px;margin-bottom:12px;opacity:0.3;}
+.empty-text{font-size:14px;color:var(--text3);}
+
+/* ── DRAWER ── */
+.drawer-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  z-index:100;opacity:0;pointer-events:none;transition:opacity 0.25s;
+}
+.drawer-overlay.open{opacity:1;pointer-events:all;}
+
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;
+  width:var(--drawer);background:var(--dark2);
+  border-left:1px solid var(--border);
+  z-index:101;display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  overflow:hidden;
+}
+.drawer.open{transform:translateX(0);}
+
+.drawer-head{
+  padding:20px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:space-between;
+  flex-shrink:0;
+}
+.drawer-close{
+  background:transparent;border:none;color:var(--text3);
+  font-size:20px;cursor:pointer;padding:2px 6px;
+  border-radius:2px;transition:color 0.15s;line-height:1;
+}
+.drawer-close:hover{color:var(--text);}
+.drawer-name{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--white);line-height:1.1;}
+.drawer-cnpj{font-size:12px;color:var(--text3);margin-top:4px;font-family:monospace;}
+.drawer-badges{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+
+.drawer-body{flex:1;overflow-y:auto;padding:20px 24px;}
+.drawer-body::-webkit-scrollbar{width:4px;}
+.drawer-body::-webkit-scrollbar-thumb{background:var(--border2);}
+
+.drawer-section{margin-bottom:24px;}
+.drawer-section-title{
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text3);margin-bottom:12px;padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── TRILHA NO DRAWER ── */
+.trilha-steps{display:flex;flex-direction:column;gap:8px;}
+.trilha-step{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:3px;
+  background:var(--dark3);border:1px solid var(--border);
+}
+.trilha-step.ok{border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.03);}
+.step-check{
+  width:24px;height:24px;flex-shrink:0;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;
+  background:var(--dark4);border:1px solid var(--border2);color:var(--text3);
+}
+.trilha-step.ok .step-check{background:var(--green-bg);border-color:rgba(34,197,94,0.4);color:var(--green);}
+.step-label{font-size:13px;color:var(--text2);}
+.trilha-step.ok .step-label{color:var(--text);}
+.step-date{font-size:11px;color:var(--text3);margin-left:auto;}
+
+/* ── INFO GRID ── */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.info-item{}
+.info-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:3px;}
+.info-value{font-size:13px;color:var(--text);}
+
+/* ── CONTRATO SECTION ── */
+.contrato-form{display:flex;flex-direction:column;gap:12px;}
+.contrato-field{display:flex;flex-direction:column;gap:5px;}
+.contrato-field label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);}
+.contrato-field input,.contrato-field textarea,.contrato-field select{
+  background:var(--dark3);border:1px solid var(--border2);border-radius:3px;
+  padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;
+  color:var(--text);outline:none;transition:border-color 0.15s;appearance:none;
+}
+.contrato-field input:focus,.contrato-field textarea:focus{border-color:var(--red);}
+.contrato-field textarea{resize:vertical;min-height:70px;}
+
+.upload-area{
+  border:1px dashed var(--border2);border-radius:3px;
+  padding:20px;text-align:center;cursor:pointer;
+  transition:border-color 0.15s,background 0.15s;
+}
+.upload-area:hover{border-color:var(--red);background:var(--red-light);}
+.upload-area.has-file{border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.04);}
+.upload-icon{font-size:24px;margin-bottom:6px;}
+.upload-text{font-size:12px;color:var(--text3);}
+.upload-text strong{color:var(--text2);}
+
+.drawer-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;gap:10px;flex-shrink:0;
+}
+.btn-primary{
+  flex:1;padding:11px;background:var(--red);border:none;border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  letter-spacing:1.5px;text-transform:uppercase;color:white;cursor:pointer;
+  transition:background 0.15s;
+}
+.btn-primary:hover{background:var(--red-d);}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-ghost{
+  padding:11px 16px;background:transparent;
+  border:1px solid var(--border2);border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:12px;
+  color:var(--text2);cursor:pointer;transition:all 0.15s;
+}
+.btn-ghost:hover{border-color:var(--text2);}
+
+.msg{padding:10px 14px;border-radius:3px;font-size:12px;margin-top:8px;display:none;line-height:1.5;}
+.msg.show{display:block;}
+.msg.success{background:var(--green-bg);border-left:3px solid var(--green);color:#86efac;}
+.msg.error{background:rgba(255,68,68,0.1);border-left:3px solid #ff4444;color:#ff8888;}
+
+/* ── CONTRATO EXISTENTE ── */
+.contrato-card{
+  background:var(--dark3);border:1px solid rgba(34,197,94,0.2);
+  border-radius:3px;padding:14px;
+}
+.contrato-card-title{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:10px;}
+.contrato-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;}
+.contrato-row span{color:var(--text3);}
+.contrato-row strong{color:var(--text);}
+
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(3,1fr);}
+  .drawer{width:100%;}
+}
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .main{padding:16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-badge">SE</div>
+    <div class="topbar-title">SESI <span>ESPORTE</span></div>
+    <div class="topbar-divider"></div>
+    <div class="orientador-info">Olá, <strong id="ori-nome">—</strong> · <span id="ori-unidade">—</span></div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+<main class="main">
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi neutral">
+      <div class="kpi-label">Total Parceiros</div>
+      <div class="kpi-value" id="kpi-total">—</div>
+      <div class="kpi-sub">na sua unidade</div>
+    </div>
+    <div class="kpi success">
+      <div class="kpi-label">Ativos</div>
+      <div class="kpi-value" id="kpi-ativos">—</div>
+      <div class="kpi-sub">com contrato vigente</div>
+    </div>
+    <div class="kpi info">
+      <div class="kpi-label">Em Andamento</div>
+      <div class="kpi-value" id="kpi-andamento">—</div>
+      <div class="kpi-sub">na trilha</div>
+    </div>
+    <div class="kpi warning">
+      <div class="kpi-label">Atenção 90d</div>
+      <div class="kpi-value" id="kpi-atencao">—</div>
+      <div class="kpi-sub">vencendo em breve</div>
+    </div>
+    <div class="kpi orange">
+      <div class="kpi-label">Urgente 60d</div>
+      <div class="kpi-value" id="kpi-urgente">—</div>
+      <div class="kpi-sub">renovar logo</div>
+    </div>
+    <div class="kpi danger">
+      <div class="kpi-label">Crítico 30d</div>
+      <div class="kpi-value" id="kpi-critico">—</div>
+      <div class="kpi-sub">ação imediata</div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="search" placeholder="Buscar parceiro, CNPJ..." oninput="filtrar()"/>
+    </div>
+    <select class="filter-select" id="filter-status" onchange="filtrar()">
+      <option value="">Todos os status</option>
+      <option value="em_andamento">Em andamento</option>
+      <option value="aguardando_contrato">Aguardando contrato</option>
+      <option value="ativo">Ativo</option>
+      <option value="inativo">Inativo</option>
+    </select>
+    <select class="filter-select" id="filter-alerta" onchange="filtrar()">
+      <option value="">Todos os alertas</option>
+      <option value="critico">Crítico (30d)</option>
+      <option value="urgente">Urgente (60d)</option>
+      <option value="atencao">Atenção (90d)</option>
+    </select>
+    <span class="results-count" id="results-count"></span>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th onclick="sortBy('razao_social')">Parceiro <span class="sort-icon">↕</span></th>
+          <th onclick="sortBy('cnpj')">CNPJ <span class="sort-icon">↕</span></th>
+          <th>Etapas</th>
+          <th onclick="sortBy('status')">Status <span class="sort-icon">↕</span></th>
+          <th>Contrato</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty-state" style="display:none;">
+      <div class="empty-icon">◎</div>
+      <div class="empty-text">Nenhum parceiro encontrado</div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
+
+<!-- DRAWER -->
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <div class="drawer-name" id="d-nome">—</div>
+      <div class="drawer-cnpj" id="d-cnpj">—</div>
+      <div class="drawer-badges" id="d-badges"></div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+
+  <div class="drawer-body">
+
+    <!-- TRILHA -->
+    <div class="drawer-section">
+      <div class="drawer-section-title">Trilha de Onboarding</div>
+      <div class="trilha-steps">
+        <div class="trilha-step" id="ts-0">
+          <div class="step-check" id="tc-0">1</div>
+          <div class="step-label">Documentos de Cadastro</div>
+          <div class="step-date" id="td-0"></div>
+        </div>
+        <div class="trilha-step" id="ts-1">
+          <div class="step-check" id="tc-1">2</div>
+          <div class="step-label">Grade Horária</div>
+          <div class="step-date" id="td-1"></div>
+        </div>
+        <div class="trilha-step" id="ts-2">
+          <div class="step-check" id="tc-2">3</div>
+          <div class="step-label">Acesso SIPAF / SESI App</div>
+          <div class="step-date" id="td-2"></div>
+        </div>
+        <div class="trilha-step" id="ts-3">
+          <div class="step-check" id="tc-3">4</div>
+          <div class="step-label">Curso Obrigatório M1</div>
+          <div class="step-date" id="td-3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="drawer-section">
+      <div class="drawer-section-title">Dados do Parceiro</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Tipo</div>
+          <div class="info-value" id="d-tipo">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Responsável</div>
+          <div class="info-value" id="d-responsavel">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Telefone</div>
+          <div class="info-value" id="d-telefone">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">E-mail</div>
+          <div class="info-value" id="d-email">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Cadastrado em</div>
+          <div class="info-value" id="d-criado">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Última atualização</div>
+          <div class="info-value" id="d-atualizado">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTRATO -->
+    <div class="drawer-section" id="d-contrato-section">
+      <div class="drawer-section-title">Contrato</div>
+      <div id="d-contrato-existente" style="display:none;">
+        <div class="contrato-card">
+          <div class="contrato-card-title">✓ Contrato registrado</div>
+          <div class="contrato-row"><span>Vigência início</span><strong id="dc-inicio">—</strong></div>
+          <div class="contrato-row"><span>Vigência fim</span><strong id="dc-fim">—</strong></div>
+          <div class="contrato-row"><span>Dias restantes</span><strong id="dc-dias">—</strong></div>
+          <div class="contrato-row"><span>Observações</span><strong id="dc-obs">—</strong></div>
+        </div>
+        <button class="btn-ghost" style="width:100%;margin-top:10px;" onclick="editarContrato()">Editar contrato</button>
+      </div>
+      <div id="d-contrato-form">
+        <div class="contrato-form">
+          <div class="contrato-field">
+            <label>Início da Vigência</label>
+            <input type="date" id="c-inicio"/>
+          </div>
+          <div class="contrato-field">
+            <label>Fim da Vigência</label>
+            <input type="date" id="c-fim"/>
+          </div>
+          <div class="contrato-field">
+            <label>Observações</label>
+            <textarea id="c-obs" placeholder="Informações adicionais..."></textarea>
+          </div>
+          <div class="contrato-field">
+            <label>Arquivo do Contrato</label>
+            <div class="upload-area" id="upload-area" onclick="document.getElementById('c-arquivo').click()">
+              <div class="upload-icon">📎</div>
+              <div class="upload-text"><strong>Clique para selecionar</strong> o arquivo PDF</div>
+            </div>
+            <input type="file" id="c-arquivo" accept=".pdf" style="display:none" onchange="onArquivoSelecionado(this)"/>
+          </div>
+        </div>
+        <div class="msg" id="msg-contrato"></div>
+      </div>
+    </div>
+
+  </div><!-- /drawer-body -->
+
+  <div class="drawer-footer">
+    <button class="btn-primary" id="btn-salvar-contrato" onclick="salvarContrato()">Salvar Contrato</button>
+    <button class="btn-ghost" onclick="closeDrawer()">Fechar</button>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://lluujmxlmcdvyvkrmbup.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_NJ5gFVAMXDgm3SNcAVz-tA_IMAiLLBj';
+const H = { 'Content-Type':'application/json', 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}` };
+
+let orientador = null;
+let todosParceitos = [];
+let parceirosExibidos = [];
+let alertasMap = {};
+let sortCol = 'razao_social';
+let sortAsc = true;
+let parceiroAtivo = null;
+let arquivoContrato = null;
+
+// ─── INIT ─────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  const s = localStorage.getItem('sesi_orientador');
+  if (!s) { window.location.href='index.html'; return; }
+  orientador = JSON.parse(s);
+
+  if (!orientador.id || orientador.expires < Date.now()) {
+    localStorage.removeItem('sesi_orientador');
+    window.location.href='index.html'; return;
+  }
+
+  document.getElementById('ori-nome').textContent = orientador.nome || '—';
+  document.getElementById('ori-unidade').textContent = orientador.unidade_sesi || '—';
+
+  await Promise.all([carregarParceiros(), carregarAlertas(), carregarKPIs()]);
+});
+
+// ─── DADOS ────────────────────────────────────────────────────
+async function carregarParceiros() {
+  try {
+    const url = orientador.is_sede
+      ? `${SUPABASE_URL}/rest/v1/parceiros?select=*&order=razao_social.asc`
+      : `${SUPABASE_URL}/rest/v1/parceiros?orientador_id=eq.${orientador.id}&select=*&order=razao_social.asc`;
+    const r = await fetch(url, {headers:H});
+    todosParceitos = await r.json();
+    filtrar();
+  } catch(e) { console.error(e); }
+}
+
+async function carregarAlertas() {
+  try {
+    const url = orientador.is_sede
+      ? `${SUPABASE_URL}/rest/v1/vw_alertas_vencimento?select=*`
+      : `${SUPABASE_URL}/rest/v1/vw_alertas_vencimento?orientador_email=eq.${encodeURIComponent(orientador.email)}&select=*`;
+    const r = await fetch(url, {headers:H});
+    const data = await r.json();
+    data.forEach(a => alertasMap[a.cnpj] = a);
+  } catch(e) { console.error(e); }
+}
+
+async function carregarKPIs() {
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/vw_dashboard_orientador?orientador_id=eq.${orientador.id}&select=*`;
+    const r = await fetch(url, {headers:H});
+    const data = await r.json();
+    if (data[0]) {
+      const d = data[0];
+      document.getElementById('kpi-total').textContent     = d.total_parceiros ?? 0;
+      document.getElementById('kpi-ativos').textContent    = d.parceiros_ativos ?? 0;
+      document.getElementById('kpi-andamento').textContent = d.parceiros_em_andamento ?? 0;
+      document.getElementById('kpi-atencao').textContent   = d.alertas_atencao ?? 0;
+      document.getElementById('kpi-urgente').textContent   = d.alertas_urgentes ?? 0;
+      document.getElementById('kpi-critico').textContent   = d.alertas_criticos ?? 0;
+    } else {
+      ['kpi-total','kpi-ativos','kpi-andamento','kpi-atencao','kpi-urgente','kpi-critico']
+        .forEach(id => document.getElementById(id).textContent = '0');
+    }
+  } catch(e) {
+    ['kpi-total','kpi-ativos','kpi-andamento','kpi-atencao','kpi-urgente','kpi-critico']
+      .forEach(id => document.getElementById(id).textContent = '0');
+  }
+}
+
+// ─── FILTRO / SORT ────────────────────────────────────────────
+function filtrar() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const status = document.getElementById('filter-status').value;
+  const alerta = document.getElementById('filter-alerta').value;
+
+  let lista = todosParceitos.filter(p => {
+    const matchQ = !q ||
+      p.razao_social?.toLowerCase().includes(q) ||
+      p.cnpj?.includes(q) ||
+      p.nome_responsavel?.toLowerCase().includes(q);
+    const matchS = !status || p.status === status;
+    const a = alertasMap[p.cnpj];
+    const matchA = !alerta || (a && a.nivel_alerta === alerta);
+    return matchQ && matchS && matchA;
+  });
+
+  lista.sort((a,b) => {
+    let va = a[sortCol] || '';
+    let vb = b[sortCol] || '';
+    return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+
+  parceirosExibidos = lista;
+  renderTable();
+}
+
+function sortBy(col) {
+  if (sortCol === col) sortAsc = !sortAsc;
+  else { sortCol = col; sortAsc = true; }
+  document.querySelectorAll('.data-table th').forEach(th => th.classList.remove('sorted'));
+  filtrar();
+}
+
+// ─── RENDER TABLE ─────────────────────────────────────────────
+function renderTable() {
+  const tbody = document.getElementById('tbody');
+  const empty = document.getElementById('empty-state');
+  document.getElementById('results-count').textContent =
+    `${parceirosExibidos.length} parceiro${parceirosExibidos.length !== 1 ? 's' : ''}`;
+
+  if (!parceirosExibidos.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = parceirosExibidos.map(p => {
+    const alerta = alertasMap[p.cnpj];
+    const alertaHtml = alerta
+      ? `<span class="alerta alerta-${alerta.nivel_alerta}">
+           ${alerta.nivel_alerta === 'critico' ? '🔴' : alerta.nivel_alerta === 'urgente' ? '🟠' : '🟡'}
+           ${alerta.dias_para_vencer}d
+         </span>`
+      : '<span class="alerta alerta-ok">—</span>';
+
+    const etapas = [
+      p.etapa_documentos, p.etapa_grade,
+      p.etapa_acesso_sipaf, p.etapa_curso_m1
+    ].map(ok => `<div class="etapa-dot ${ok?'ok':''}" title="${ok?'Concluído':'Pendente'}"></div>`).join('');
+
+    const statusMap = {
+      em_andamento: 'badge-andamento',
+      aguardando_contrato: 'badge-aguardando',
+      ativo: 'badge-ativo',
+      inativo: 'badge-inativo'
+    };
+    const statusLabel = {
+      em_andamento: 'Em andamento',
+      aguardando_contrato: 'Ag. contrato',
+      ativo: 'Ativo',
+      inativo: 'Inativo'
+    };
+
+    return `<tr onclick="openDrawer('${p.id}')">
+      <td>
+        <div class="razao-social">${p.razao_social}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">${p.nome_responsavel || ''}</div>
+      </td>
+      <td class="cnpj-cell">${fmtCNPJ(p.cnpj)}</td>
+      <td><div class="etapas">${etapas}</div></td>
+      <td><span class="badge ${statusMap[p.status] || ''}">${statusLabel[p.status] || p.status}</span></td>
+      <td>${alertaHtml}</td>
+      <td><button class="btn-detail" onclick="event.stopPropagation();openDrawer('${p.id}')">Detalhes →</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── DRAWER ───────────────────────────────────────────────────
+async function openDrawer(parceiroId) {
+  const p = todosParceitos.find(x => x.id === parceiroId);
+  if (!p) return;
+  parceiroAtivo = p;
+
+  document.querySelectorAll('.data-table tr').forEach(tr => tr.classList.remove('selected'));
+  document.querySelector(`tr[onclick*="${parceiroId}"]`)?.classList.add('selected');
+
+  // Header
+  document.getElementById('d-nome').textContent = p.razao_social;
+  document.getElementById('d-cnpj').textContent = fmtCNPJ(p.cnpj);
+
+  const statusMap = { em_andamento:'badge-andamento', aguardando_contrato:'badge-aguardando', ativo:'badge-ativo', inativo:'badge-inativo' };
+  const statusLabel = { em_andamento:'Em andamento', aguardando_contrato:'Aguardando contrato', ativo:'Ativo', inativo:'Inativo' };
+  const badgesEl = document.getElementById('d-badges');
+  badgesEl.innerHTML = `<span class="badge ${statusMap[p.status]||''}">${statusLabel[p.status]||p.status}</span>`;
+  const alerta = alertasMap[p.cnpj];
+  if (alerta) {
+    badgesEl.innerHTML += `<span class="alerta alerta-${alerta.nivel_alerta}" style="padding:3px 10px;border-radius:2px;">
+      ${alerta.nivel_alerta === 'critico' ? '🔴 Crítico' : alerta.nivel_alerta === 'urgente' ? '🟠 Urgente' : '🟡 Atenção'} — ${alerta.dias_para_vencer} dias
+    </span>`;
+  }
+
+  // Trilha
+  const steps = [p.etapa_documentos, p.etapa_grade, p.etapa_acesso_sipaf, p.etapa_curso_m1];
+  steps.forEach((ok, i) => {
+    document.getElementById(`ts-${i}`).className = 'trilha-step' + (ok ? ' ok' : '');
+    document.getElementById(`tc-${i}`).textContent = ok ? '✓' : i+1;
+  });
+
+  // Info
+  const tipoMap = { prefeitura:'Prefeitura', empresa:'Empresa', ong:'ONG / Associação', outro:'Outro' };
+  document.getElementById('d-tipo').textContent = tipoMap[p.tipo] || '—';
+  document.getElementById('d-responsavel').textContent = p.nome_responsavel || '—';
+  document.getElementById('d-telefone').textContent = p.telefone || '—';
+  document.getElementById('d-email').textContent = p.email || '—';
+  document.getElementById('d-criado').textContent = fmtDate(p.criado_em);
+  document.getElementById('d-atualizado').textContent = fmtDate(p.atualizado_em);
+
+  // Contrato
+  await carregarContrato(p);
+
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+async function carregarContrato(p) {
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/contratos?parceiro_id=eq.${p.id}&select=*&order=criado_em.desc&limit=1`,
+      {headers:H}
+    );
+    const data = await r.json();
+    const formEl = document.getElementById('d-contrato-form');
+    const existEl = document.getElementById('d-contrato-existente');
+
+    if (data.length) {
+      const c = data[0];
+      const dias = Math.ceil((new Date(c.vigencia_fim) - new Date()) / 86400000);
+      document.getElementById('dc-inicio').textContent = fmtDateBR(c.vigencia_inicio);
+      document.getElementById('dc-fim').textContent = fmtDateBR(c.vigencia_fim);
+      document.getElementById('dc-dias').textContent = dias > 0 ? `${dias} dias` : 'Vencido';
+      document.getElementById('dc-obs').textContent = c.observacoes || '—';
+      existEl.style.display = 'block';
+      formEl.style.display = 'none';
+      document.getElementById('btn-salvar-contrato').style.display = 'none';
+    } else {
+      existEl.style.display = 'none';
+      formEl.style.display = 'block';
+      document.getElementById('btn-salvar-contrato').style.display = 'block';
+      document.getElementById('c-inicio').value = '';
+      document.getElementById('c-fim').value = '';
+      document.getElementById('c-obs').value = '';
+      document.getElementById('upload-area').classList.remove('has-file');
+      document.getElementById('upload-area').innerHTML = `<div class="upload-icon">📎</div><div class="upload-text"><strong>Clique para selecionar</strong> o arquivo PDF</div>`;
+      arquivoContrato = null;
+    }
+  } catch(e) { console.error(e); }
+}
+
+function editarContrato() {
+  document.getElementById('d-contrato-existente').style.display = 'none';
+  document.getElementById('d-contrato-form').style.display = 'block';
+  document.getElementById('btn-salvar-contrato').style.display = 'block';
+}
+
+function closeDrawer() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+  document.querySelectorAll('.data-table tr').forEach(tr => tr.classList.remove('selected'));
+  parceiroAtivo = null;
+}
+
+function onArquivoSelecionado(input) {
+  if (!input.files[0]) return;
+  arquivoContrato = input.files[0];
+  const area = document.getElementById('upload-area');
+  area.classList.add('has-file');
+  area.innerHTML = `<div class="upload-icon">✅</div><div class="upload-text"><strong>${input.files[0].name}</strong></div>`;
+}
+
+async function salvarContrato() {
+  if (!parceiroAtivo) return;
+  const inicio = document.getElementById('c-inicio').value;
+  const fim = document.getElementById('c-fim').value;
+  const obs = document.getElementById('c-obs').value;
+
+  if (!inicio || !fim) {
+    showMsg('msg-contrato','Preencha as datas de vigência.','error'); return;
+  }
+  if (new Date(fim) <= new Date(inicio)) {
+    showMsg('msg-contrato','A data de fim deve ser posterior ao início.','error'); return;
+  }
+
+  const btn = document.getElementById('btn-salvar-contrato');
+  btn.disabled = true; btn.textContent = 'Salvando...';
+  hideMsg('msg-contrato');
+
+  try {
+    let sharepoint_url = null;
+    // Quando integração SharePoint estiver configurada, upload vai aqui
+
+    await fetch(`${SUPABASE_URL}/rest/v1/contratos`, {
+      method:'POST', headers:H,
+      body: JSON.stringify({
+        parceiro_id: parceiroAtivo.id,
+        orientador_id: orientador.id,
+        razao_social: parceiroAtivo.razao_social,
+        cnpj: parceiroAtivo.cnpj,
+        vigencia_inicio: inicio,
+        vigencia_fim: fim,
+        observacoes: obs,
+        sharepoint_url
+      })
+    });
+
+    // Atualizar status do parceiro
+    await fetch(`${SUPABASE_URL}/rest/v1/parceiros?id=eq.${parceiroAtivo.id}`, {
+      method:'PATCH', headers:H,
+      body: JSON.stringify({ status:'ativo', atualizado_em: new Date().toISOString() })
+    });
+
+    showMsg('msg-contrato','Contrato salvo com sucesso!','success');
+    await Promise.all([carregarParceiros(), carregarAlertas(), carregarKPIs()]);
+    setTimeout(() => carregarContrato(parceiroAtivo), 1000);
+
+  } catch(e) {
+    showMsg('msg-contrato','Erro ao salvar. Tente novamente.','error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Salvar Contrato';
+  }
+}
+
+// ─── UTILS ────────────────────────────────────────────────────
+function fmtCNPJ(c) {
+  c = (c||'').replace(/\D/g,'');
+  return c.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5') || c;
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('pt-BR');
+}
+function fmtDateBR(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.className = `msg ${type} show`;
+}
+function hideMsg(id) { document.getElementById(id).className = 'msg'; }
+function sair() {
+  localStorage.removeItem('sesi_orientador');
+  window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>
