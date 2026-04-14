@@ -607,15 +607,16 @@ function renderAulas(){
 
 // ── MARCAR PROGRESSO ──────────────────────────────────────────
 async function marcar(aulaId, campo){
-  const p = progresso[aulaId] || {
+  const existing = progresso[aulaId] || {};
+  const p = {
     cpf: sessao.cpf,
     nome_professor: sessao.nome,
     parceiro_id: sessao.parceiro_id,
     aula_id: aulaId,
-    assistiu: false,
-    avaliacao_feita: false,
-    material_baixado: false,
-    concluida: false
+    assistiu: existing.assistiu || false,
+    avaliacao_feita: existing.avaliacao_feita || false,
+    material_baixado: existing.material_baixado || false,
+    concluida: existing.concluida || false
   };
 
   p[campo] = true;
@@ -632,17 +633,39 @@ async function marcar(aulaId, campo){
   const row = document.getElementById(`aula-row-${aulaId}`);
   if(p.concluida){
     row?.classList.add('concluida');
-    row.querySelector('.aula-num-col').textContent = '✓';
+    const numCol = row?.querySelector('.aula-num-col');
+    if(numCol) numCol.textContent = '✓';
   }
 
-  // Salvar no banco
+  // Salvar no banco — tenta update primeiro, se não existir faz insert
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/progresso_curso`, {
-      method:'POST',
-      headers:{...H,'Prefer':'resolution=merge-duplicates'},
-      body: JSON.stringify(p)
-    });
-  } catch(e){ console.error(e); }
+    // Verificar se já existe registro
+    const check = await fetch(
+      `${SUPABASE_URL}/rest/v1/progresso_curso?cpf=eq.${sessao.cpf}&parceiro_id=eq.${sessao.parceiro_id}&aula_id=eq.${aulaId}&select=id`,
+      {headers:H}
+    );
+    const existe = await check.json();
+
+    if(existe.length > 0) {
+      // UPDATE
+      await fetch(
+        `${SUPABASE_URL}/rest/v1/progresso_curso?cpf=eq.${sessao.cpf}&parceiro_id=eq.${sessao.parceiro_id}&aula_id=eq.${aulaId}`,
+        { method:'PATCH', headers:H, body: JSON.stringify({
+          assistiu: p.assistiu,
+          avaliacao_feita: p.avaliacao_feita,
+          material_baixado: p.material_baixado,
+          concluida: p.concluida,
+          atualizado_em: p.atualizado_em
+        })}
+      );
+    } else {
+      // INSERT
+      await fetch(`${SUPABASE_URL}/rest/v1/progresso_curso`, {
+        method:'POST', headers:H,
+        body: JSON.stringify(p)
+      });
+    }
+  } catch(e){ console.error('Erro ao salvar progresso:', e); }
 
   atualizarStats();
 }
