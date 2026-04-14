@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Trilha do Parceiro — SESI Esporte</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --red:#C8102E; --red-d:#9B0D22; --red-light:rgba(200,16,46,0.1);
+  --dark:#0D0D0D; --dark2:#161616; --dark3:#1E1E1E; --dark4:#252525;
+  --border:#2A2A2A; --border2:#333;
+  --text:#E8E8E8; --text2:#A0A0A0; --text3:#666;
+  --white:#FFFFFF;
+  --green:#22C55E; --green-bg:rgba(34,197,94,0.1);
+  --amber:#F59E0B; --amber-bg:rgba(245,158,11,0.1);
+  --sidebar:260px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);display:flex;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  background:var(--dark2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  height:100vh;overflow:hidden;
+}
+.sidebar-logo{
+  padding:28px 24px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+}
+.logo-badge{
+  width:38px;height:38px;background:var(--red);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:16px;color:white;
+  clip-path:polygon(0 0,88% 0,100% 12%,100% 100%,12% 100%,0 88%);
+  flex-shrink:0;
+}
+.logo-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--text2);}
+.logo-name span{color:var(--red);}
+
+.partner-card{
+  margin:16px;padding:14px;
+  background:var(--dark3);border:1px solid var(--border);border-radius:4px;
+}
+.partner-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:4px;}
+.partner-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.partner-cnpj{font-size:11px;color:var(--text3);margin-top:2px;}
+
+.steps-nav{flex:1;overflow-y:auto;padding:8px 0;}
+.steps-nav::-webkit-scrollbar{width:4px;}
+.steps-nav::-webkit-scrollbar-track{background:transparent;}
+.steps-nav::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+.nav-section{padding:16px 20px 8px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);}
+
+.step-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 20px;cursor:pointer;
+  transition:background 0.15s;position:relative;
+}
+.step-item:hover{background:rgba(255,255,255,0.03);}
+.step-item.active{background:rgba(200,16,46,0.08);}
+.step-item.active::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;background:var(--red);border-radius:0 2px 2px 0;
+}
+
+.step-icon{
+  width:28px;height:28px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;font-size:11px;font-weight:600;
+  background:var(--dark4);border:1px solid var(--border2);
+  color:var(--text3);transition:all 0.2s;
+}
+.step-item.done .step-icon{background:var(--green-bg);border-color:var(--green);color:var(--green);}
+.step-item.active .step-icon{background:var(--red-light);border-color:var(--red);color:var(--red);}
+
+.step-info{flex:1;min-width:0;}
+.step-title{font-size:12px;font-weight:500;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.step-item.active .step-title{color:var(--text);}
+.step-item.done .step-title{color:var(--text2);}
+.step-status{font-size:10px;color:var(--text3);margin-top:2px;}
+.step-item.done .step-status{color:var(--green);}
+
+.sidebar-footer{
+  padding:16px;border-top:1px solid var(--border);
+}
+.progress-bar-wrap{margin-bottom:8px;}
+.progress-label{display:flex;justify-content:space-between;margin-bottom:6px;}
+.progress-label span{font-size:11px;color:var(--text3);}
+.progress-label strong{font-size:11px;color:var(--text2);}
+.progress-track{height:3px;background:var(--border2);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(to right,var(--red),#e85566);border-radius:2px;transition:width 0.4s ease;}
+
+.btn-sair{
+  width:100%;padding:9px;background:transparent;
+  border:1px solid var(--border2);border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:12px;
+  color:var(--text3);cursor:pointer;transition:all 0.15s;
+  letter-spacing:1px;text-transform:uppercase;
+}
+.btn-sair:hover{border-color:var(--text3);color:var(--text2);}
+
+/* ── MAIN ── */
+.main{flex:1;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+.main::-webkit-scrollbar{width:6px;}
+.main::-webkit-scrollbar-track{background:transparent;}
+.main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+.topbar{
+  padding:20px 36px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--dark);position:sticky;top:0;z-index:10;
+}
+.topbar-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);}
+.topbar-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:2px;font-size:11px;font-weight:500;
+  letter-spacing:1px;text-transform:uppercase;
+}
+.badge-pending{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,158,11,0.25);}
+.badge-done{background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,0.25);}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+
+.content{flex:1;padding:36px;}
+
+/* ── SCREENS ── */
+.screen{display:none;}
+.screen.active{display:block;animation:fadeIn 0.25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── SECTION HEADER ── */
+.section-head{margin-bottom:32px;}
+.section-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--red);margin-bottom:10px;
+}
+.section-tag::before{content:'';width:16px;height:1px;background:var(--red);}
+.section-h{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--white);line-height:1;}
+.section-desc{font-size:14px;color:var(--text2);margin-top:10px;line-height:1.6;max-width:560px;}
+
+/* ── CARDS ── */
+.card{
+  background:var(--dark2);border:1px solid var(--border);
+  border-radius:4px;padding:24px;margin-bottom:20px;
+}
+.card-title{
+  font-size:12px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text2);margin-bottom:16px;
+  padding-bottom:12px;border-bottom:1px solid var(--border);
+}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-grid.cols3{grid-template-columns:1fr 1fr 1fr;}
+.form-grid.full{grid-template-columns:1fr;}
+
+.field{display:flex;flex-direction:column;gap:6px;}
+.field.span2{grid-column:span 2;}
+
+.field label{
+  font-size:11px;font-weight:500;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text2);
+}
+.field input,.field select,.field textarea{
+  background:var(--dark3);border:1px solid var(--border2);
+  border-radius:3px;padding:11px 14px;
+  font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);
+  outline:none;transition:border-color 0.15s,background 0.15s;
+  appearance:none;
+}
+.field textarea{resize:vertical;min-height:80px;}
+.field input::placeholder,.field textarea::placeholder{color:var(--text3);}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--red);background:var(--dark4);
+}
+.field-hint{font-size:11px;color:var(--text3);}
+
+/* ── TABLE ROWS (grade/sipaf) ── */
+.table-wrap{overflow-x:auto;margin-bottom:16px;}
+.data-table{width:100%;border-collapse:collapse;min-width:700px;}
+.data-table th{
+  background:var(--dark3);
+  padding:10px 12px;
+  font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text3);text-align:left;border-bottom:1px solid var(--border2);
+  font-weight:500;white-space:nowrap;
+}
+.data-table td{
+  padding:8px 12px;border-bottom:1px solid var(--border);
+}
+.data-table td input,.data-table td select{
+  width:100%;background:transparent;border:none;outline:none;
+  padding:4px 6px;font-family:'DM Sans',sans-serif;
+  font-size:13px;color:var(--text);border-radius:2px;
+}
+.data-table td input:focus,.data-table td select:focus{
+  background:var(--dark4);border:1px solid var(--red);
+}
+.data-table td select option{background:var(--dark3);}
+.data-table tr:hover td{background:rgba(255,255,255,0.02);}
+.data-table .del-btn{
+  background:transparent;border:none;color:var(--text3);
+  cursor:pointer;padding:4px 8px;border-radius:2px;font-size:14px;
+  transition:color 0.15s;
+}
+.data-table .del-btn:hover{color:#ff4444;}
+
+/* ── DOC UPLOAD ── */
+.doc-list{display:flex;flex-direction:column;gap:10px;}
+.doc-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px;background:var(--dark3);
+  border:1px solid var(--border2);border-radius:3px;
+  transition:border-color 0.15s;
+}
+.doc-item.uploaded{border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.04);}
+.doc-icon{
+  width:36px;height:36px;flex-shrink:0;
+  background:var(--dark4);border:1px solid var(--border2);
+  border-radius:3px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+}
+.doc-item.uploaded .doc-icon{background:var(--green-bg);border-color:rgba(34,197,94,0.3);}
+.doc-info{flex:1;min-width:0;}
+.doc-name{font-size:13px;font-weight:500;color:var(--text);}
+.doc-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.doc-item.uploaded .doc-sub{color:var(--green);}
+.doc-upload-btn{
+  padding:7px 16px;background:transparent;
+  border:1px solid var(--border2);border-radius:2px;
+  font-family:'DM Sans',sans-serif;font-size:12px;
+  color:var(--text2);cursor:pointer;white-space:nowrap;
+  transition:all 0.15s;letter-spacing:0.5px;
+}
+.doc-upload-btn:hover{border-color:var(--red);color:var(--red);}
+.doc-item.uploaded .doc-upload-btn{
+  border-color:rgba(34,197,94,0.4);color:var(--green);
+}
+input[type=file]{display:none;}
+
+/* ── BUTTONS ── */
+.btn-row{display:flex;align-items:center;gap:12px;margin-top:24px;flex-wrap:wrap;}
+.btn-primary{
+  padding:12px 28px;background:var(--red);border:none;border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;color:white;cursor:pointer;
+  transition:background 0.15s,transform 0.1s;
+}
+.btn-primary:hover{background:var(--red-d);}
+.btn-primary:active{transform:scale(0.99);}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-secondary{
+  padding:11px 22px;background:transparent;
+  border:1px solid var(--border2);border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:12px;
+  color:var(--text2);cursor:pointer;letter-spacing:1px;
+  text-transform:uppercase;transition:all 0.15s;
+}
+.btn-secondary:hover{border-color:var(--text2);color:var(--text);}
+.btn-add{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 18px;background:rgba(200,16,46,0.08);
+  border:1px dashed rgba(200,16,46,0.3);border-radius:3px;
+  font-size:12px;color:var(--red);cursor:pointer;
+  transition:all 0.15s;font-family:'DM Sans',sans-serif;
+  letter-spacing:0.5px;
+}
+.btn-add:hover{background:rgba(200,16,46,0.14);border-color:var(--red);}
+
+/* ── NETFLIX MODULE ── */
+.module-header{
+  background:linear-gradient(135deg,#1a0810 0%,#0D0D0D 60%);
+  padding:40px 36px 32px;border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.module-header::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:300px;height:300px;
+  background:radial-gradient(circle,rgba(200,16,46,0.12) 0%,transparent 70%);
+}
+.module-eyebrow{
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--red);margin-bottom:8px;
+}
+.module-title{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;color:var(--white);}
+.module-obj{
+  font-size:13px;color:var(--text2);margin-top:8px;
+  font-style:italic;max-width:500px;line-height:1.5;
+}
+.module-progress{
+  display:inline-flex;align-items:center;gap:10px;
+  margin-top:20px;padding:8px 16px;
+  background:rgba(255,255,255,0.05);border:1px solid var(--border2);
+  border-radius:2px;font-size:12px;color:var(--text2);
+}
+.module-progress strong{color:var(--text);}
+
+.aulas-list{padding:24px 36px;}
+.aula-card{
+  display:flex;align-items:center;gap:20px;
+  padding:20px;background:var(--dark2);
+  border:1px solid var(--border);border-radius:4px;
+  margin-bottom:12px;transition:border-color 0.15s,background 0.15s;
+}
+.aula-card:hover{border-color:var(--border2);background:var(--dark3);}
+.aula-card.concluida{border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.02);}
+
+.aula-num{
+  width:40px;height:40px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:20px;
+  background:var(--dark3);border:1px solid var(--border2);
+  border-radius:2px;color:var(--text3);
+}
+.aula-card.concluida .aula-num{
+  background:var(--green-bg);border-color:rgba(34,197,94,0.3);color:var(--green);
+}
+
+.aula-info{flex:1;min-width:0;}
+.aula-title{font-size:14px;font-weight:500;color:var(--text);}
+.aula-doc{font-size:12px;color:var(--text3);margin-top:3px;}
+.aula-prog{
+  display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;
+}
+.prog-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:2px;
+  font-size:11px;font-weight:500;border:1px solid var(--border2);
+  color:var(--text3);background:var(--dark3);
+}
+.prog-pill.done{
+  background:var(--green-bg);border-color:rgba(34,197,94,0.3);
+  color:var(--green);
+}
+.prog-pill::before{content:'○';font-size:9px;}
+.prog-pill.done::before{content:'●';}
+
+.aula-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
+.aula-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:2px;
+  font-family:'DM Sans',sans-serif;font-size:12px;
+  font-weight:500;cursor:pointer;transition:all 0.15s;
+  text-decoration:none;border:none;
+}
+.aula-btn-watch{background:var(--red);color:white;}
+.aula-btn-watch:hover{background:var(--red-d);}
+.aula-btn-eval{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.aula-btn-eval:hover{border-color:var(--text2);color:var(--text);}
+.aula-btn-mat{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.aula-btn-mat:hover{border-color:var(--text2);color:var(--text);}
+
+/* ── SATISFACTION ── */
+.satisfaction-banner{
+  margin:0 36px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;
+  background:rgba(200,16,46,0.06);border:1px solid rgba(200,16,46,0.2);
+  border-radius:3px;
+}
+.sat-text{font-size:13px;color:var(--text2);}
+.sat-text strong{color:var(--text);}
+.sat-btn{
+  padding:8px 20px;background:var(--red);border:none;
+  border-radius:2px;font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;color:white;cursor:pointer;
+  transition:background 0.15s;text-decoration:none;
+  white-space:nowrap;flex-shrink:0;
+}
+.sat-btn:hover{background:var(--red-d);}
+
+/* ── MSG ── */
+.msg{
+  padding:12px 16px;border-radius:3px;font-size:13px;
+  margin-bottom:20px;display:none;line-height:1.5;
+}
+.msg.show{display:block;}
+.msg.success{background:rgba(34,197,94,0.1);border-left:3px solid var(--green);color:#86efac;}
+.msg.error{background:rgba(255,68,68,0.1);border-left:3px solid #ff4444;color:#ff8888;}
+.msg.info{background:var(--red-light);border-left:3px solid var(--red);color:var(--text);}
+
+/* ── COMPLETE OVERLAY ── */
+.step-complete{
+  text-align:center;padding:48px 24px;
+}
+.complete-icon{
+  width:64px;height:64px;margin:0 auto 20px;
+  background:var(--green-bg);border:2px solid var(--green);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:28px;
+}
+.complete-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:var(--green);margin-bottom:8px;}
+.complete-sub{font-size:14px;color:var(--text2);}
+
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .content{padding:20px;}
+  .topbar{padding:16px 20px;}
+  .form-grid{grid-template-columns:1fr;}
+  .form-grid.cols3{grid-template-columns:1fr;}
+  .field.span2{grid-column:span 1;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-badge">SE</div>
+    <div class="logo-name">SESI <span>ESPORTE</span></div>
+  </div>
+
+  <div class="partner-card">
+    <div class="partner-label">Parceiro</div>
+    <div class="partner-name" id="sb-nome">—</div>
+    <div class="partner-cnpj" id="sb-cnpj">—</div>
+  </div>
+
+  <nav class="steps-nav">
+    <div class="nav-section">Etapas da Trilha</div>
+
+    <div class="step-item active" id="nav-0" onclick="goStep(0)">
+      <div class="step-icon" id="icon-0">1</div>
+      <div class="step-info">
+        <div class="step-title">Documentos</div>
+        <div class="step-status" id="status-0">Pendente</div>
+      </div>
+    </div>
+
+    <div class="step-item" id="nav-1" onclick="goStep(1)">
+      <div class="step-icon" id="icon-1">2</div>
+      <div class="step-info">
+        <div class="step-title">Grade Horária</div>
+        <div class="step-status" id="status-1">Pendente</div>
+      </div>
+    </div>
+
+    <div class="step-item" id="nav-2" onclick="goStep(2)">
+      <div class="step-icon" id="icon-2">3</div>
+      <div class="step-info">
+        <div class="step-title">Acesso SIPAF</div>
+        <div class="step-status" id="status-2">Pendente</div>
+      </div>
+    </div>
+
+    <div class="step-item" id="nav-3" onclick="goStep(3)">
+      <div class="step-icon" id="icon-3">4</div>
+      <div class="step-info">
+        <div class="step-title">Curso M1</div>
+        <div class="step-status" id="status-3">Pendente</div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>Progresso geral</span>
+        <strong id="progress-pct">0%</strong>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Documentos de Cadastro</div>
+    <div class="topbar-badge badge-pending" id="topbar-badge">
+      <span class="badge-dot"></span>
+      <span id="badge-text">Pendente</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ════════════════════════════════════
+         ETAPA 1 — DOCUMENTOS
+    ════════════════════════════════════ -->
+    <div id="screen-0" class="screen active">
+      <div class="section-head">
+        <div class="section-tag">Etapa 1</div>
+        <div class="section-h">Documentos de Cadastro</div>
+        <p class="section-desc">Preencha os dados do parceiro e faça upload dos documentos exigidos para formalização do cadastro.</p>
+      </div>
+
+      <div id="msg-docs" class="msg"></div>
+
+      <!-- Dados básicos -->
+      <div class="card">
+        <div class="card-title">Dados do Parceiro</div>
+        <div class="form-grid">
+          <div class="field span2">
+            <label>Tipo de Parceiro</label>
+            <select id="doc-tipo" onchange="toggleTipo()">
+              <option value="">Selecione...</option>
+              <option value="prefeitura">Prefeitura</option>
+              <option value="empresa">Empresa</option>
+              <option value="ong">ONG / Associação</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Telefone (com DDD)</label>
+            <input type="tel" id="doc-telefone" placeholder="(11) 99999-9999" oninput="maskTel(this)"/>
+          </div>
+          <div class="field">
+            <label>E-mail para Contato</label>
+            <input type="email" id="doc-email" placeholder="contato@parceiro.com"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documentos prefeitura -->
+      <div class="card" id="docs-prefeitura" style="display:none;">
+        <div class="card-title">Documentos — Prefeitura</div>
+        <div class="doc-list">
+          <div class="doc-item" id="di-cnpj-pref">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">CNPJ</div>
+              <div class="doc-sub">Emitido com no máximo 90 dias</div>
+            </div>
+            <label class="doc-upload-btn" for="f-cnpj-pref">Selecionar</label>
+            <input type="file" id="f-cnpj-pref" accept=".pdf,.jpg,.png" onchange="fileSelected(this,'di-cnpj-pref')"/>
+          </div>
+          <div class="doc-item" id="di-insc-mun">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">Cartão de Inscrição Municipal</div>
+              <div class="doc-sub">Se houver</div>
+            </div>
+            <label class="doc-upload-btn" for="f-insc-mun">Selecionar</label>
+            <input type="file" id="f-insc-mun" accept=".pdf,.jpg,.png" onchange="fileSelected(this,'di-insc-mun')"/>
+          </div>
+          <div class="doc-item" id="di-lei-org">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">Lei Orgânica do Município</div>
+              <div class="doc-sub">Documento oficial</div>
+            </div>
+            <label class="doc-upload-btn" for="f-lei-org">Selecionar</label>
+            <input type="file" id="f-lei-org" accept=".pdf,.jpg,.png" onchange="fileSelected(this,'di-lei-org')"/>
+          </div>
+          <div class="doc-item" id="di-posse">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">Termo de Posse do Prefeito</div>
+              <div class="doc-sub">Documento oficial</div>
+            </div>
+            <label class="doc-upload-btn" for="f-posse">Selecionar</label>
+            <input type="file" id="f-posse" accept=".pdf,.jpg,.png" onchange="fileSelected(this,'di-posse')"/>
+          </div>
+          <div class="doc-item" id="di-rg-pref">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">RG e CPF do Prefeito</div>
+              <div class="doc-sub">Documentos de identificação</div>
+            </div>
+            <label class="doc-upload-btn" for="f-rg-pref">Selecionar</label>
+            <input type="file" id="f-rg-pref" accept=".pdf,.jpg,.png" onchange="fileSelected(this,'di-rg-pref')"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documentos empresa -->
+      <div class="card" id="docs-empresa" style="display:none;">
+        <div class="card-title">Documentos — Empresa / ONG</div>
+        <div class="doc-list">
+          <div class="doc-item" id="di-cnpj-emp">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">CNPJ</div>
+              <div class="doc-sub">Emitido com no máximo 90 dias</div>
+            </div>
+            <label class="doc-upload-btn" for="f-cnpj-emp">Selecionar</label>
+            <input type="file" id="f-cnpj-emp" accept=".pdf,.jpg,.png" onchange="fileSelected(this,'di-cnpj-emp')"/>
+          </div>
+          <div class="doc-item" id="di-sintegra">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">Cartão de Inscrição Estadual — SINTEGRA</div>
+              <div class="doc-sub">Emitido com no máximo 90 dias</div>
+            </div>
+            <label class="doc-upload-btn" for="f-sintegra">Selecionar</label>
+            <input type="file" id="f-sintegra" accept=".pdf,.jpg,.png" onchange="fileSelected(this,'di-sintegra')"/>
+          </div>
+          <div class="doc-item" id="di-alvara">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">Cartão de Inscrição Municipal ou Alvará</div>
+              <div class="doc-sub">Emitido com no máximo 90 dias</div>
+            </div>
+            <label class="doc-upload-btn" for="f-alvara">Selecionar</label>
+            <input type="file" id="f-alvara" accept=".pdf,.jpg,.png" onchange="fileSelected(this,'di-alvara')"/>
+          </div>
+          <div class="doc-item" id="di-contrato-social">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">Contrato Social / Ata + Estatuto / Declaração MEI</div>
+              <div class="doc-sub">Documento de constituição da empresa</div>
+            </div>
+            <label class="doc-upload-btn" for="f-contrato-social">Selecionar</label>
+            <input type="file" id="f-contrato-social" accept=".pdf,.jpg,.png" onchange="fileSelected(this,'di-contrato-social')"/>
+          </div>
+          <div class="doc-item" id="di-seis">
+            <div class="doc-icon">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">Cadastro de Empresas Inidôneas e Suspensas (SEIS)</div>
+              <div class="doc-sub">Consulta atualizada</div>
+            </div>
+            <label class="doc-upload-btn" for="f-seis">Selecionar</label>
+            <input type="file" id="f-seis" accept=".pdf,.jpg,.png" onchange="fileSelected(this,'di-seis')"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" onclick="salvarDocs()">Salvar e Avançar</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         ETAPA 2 — GRADE HORÁRIA
+    ════════════════════════════════════ -->
+    <div id="screen-1" class="screen">
+      <div class="section-head">
+        <div class="section-tag">Etapa 2</div>
+        <div class="section-h">Grade Horária</div>
+        <p class="section-desc">Informe os horários das modalidades esportivas. Adicione uma linha por turma.</p>
+      </div>
+
+      <div id="msg-grade" class="msg"></div>
+
+      <div class="card">
+        <div class="card-title">Turmas e Horários</div>
+        <div class="table-wrap">
+          <table class="data-table" id="grade-table">
+            <thead>
+              <tr>
+                <th>Modalidade</th>
+                <th>Nível</th>
+                <th>Fase / Turma</th>
+                <th>Gênero</th>
+                <th>Faixa Etária</th>
+                <th>Horário</th>
+                <th>Professor</th>
+                <th>Local</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="grade-tbody"></tbody>
+          </table>
+        </div>
+        <button class="btn-add" onclick="addGradeRow()">+ Adicionar Turma</button>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" onclick="salvarGrade()">Salvar e Avançar</button>
+        <button class="btn-secondary" onclick="goStep(0)">← Voltar</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         ETAPA 3 — ACESSO SIPAF
+    ════════════════════════════════════ -->
+    <div id="screen-2" class="screen">
+      <div class="section-head">
+        <div class="section-tag">Etapa 3</div>
+        <div class="section-h">Acesso SIPAF / SESI App</div>
+        <p class="section-desc">Cadastre todos os treinadores e responsáveis que precisarão de acesso ao sistema. Adicione uma linha por pessoa.</p>
+      </div>
+
+      <div id="msg-sipaf" class="msg"></div>
+
+      <div class="card">
+        <div class="card-title">Profissionais para Acesso</div>
+        <div class="table-wrap">
+          <table class="data-table" id="sipaf-table">
+            <thead>
+              <tr>
+                <th>Nome do Professor / Gestor</th>
+                <th>CPF (sem pontuação)</th>
+                <th>Data de Nascimento</th>
+                <th>E-mail</th>
+                <th>Função no SIPAF</th>
+                <th>CREF</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="sipaf-tbody"></tbody>
+          </table>
+        </div>
+        <button class="btn-add" onclick="addSipafRow()">+ Adicionar Profissional</button>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" onclick="salvarSipaf()">Salvar e Avançar</button>
+        <button class="btn-secondary" onclick="goStep(1)">← Voltar</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════
+         ETAPA 4 — CURSO M1
+    ════════════════════════════════════ -->
+    <div id="screen-3" class="screen">
+      <div class="module-header">
+        <div class="module-eyebrow">Módulo 1</div>
+        <div class="module-title">Programa SESI Esporte e Aprendizagem</div>
+        <div class="module-obj">Objetivo: Compreender os fundamentos e a metodologia do Programa SESI Esporte no nível de Participação.</div>
+        <div class="module-progress">
+          Progresso: <strong><span id="m1-concluidas">0</span> / 4 aulas concluídas</strong>
+        </div>
+      </div>
+
+      <div class="satisfaction-banner">
+        <div class="sat-text"><strong>Pesquisa de Satisfação</strong> — Sua opinião é importante para melhorarmos o programa.</div>
+        <a href="https://forms.office.com/r/4eQzL8DyB6" target="_blank" class="sat-btn">Responder</a>
+      </div>
+
+      <div class="aulas-list" id="aulas-list"></div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<script>
+const SUPABASE_URL = 'SUA_SUPABASE_URL';
+const SUPABASE_KEY = 'SUA_SUPABASE_ANON_KEY';
+const H = { 'Content-Type':'application/json', 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}` };
+
+// ─── SESSÃO ───────────────────────────────────────────────────
+let parceiro = null;
+let stepStatus = [false,false,false,false];
+let currentStep = 0;
+let gradeRows = [];
+let sipafRows = [];
+let uploadedFiles = {};
+
+const AULAS = [
+  { id:'M1A1', title:'Aula 1: SESI Esporte — Metodologia, conceitos e aplicações', docente:'Esp. Dayane de Souza',
+    youtube:'https://www.youtube.com/watch?v=w97w_QYFAj8',
+    avaliacao:'https://forms.office.com/pages/responsepage.aspx?id=3qZIQdENBE2kxXjjdOT21h036K41tOZCk3_M4V8sOPxUQjJUUlVPWEU2NVhRNTRGRDhVVDdYNEpFMC4u&route=shorturl',
+    material:'https://drive.google.com/uc?id=1qM3UOtG2bdd6I8bexecp7YNw3Uef3K-u&export=download' },
+  { id:'M1A2', title:'Aula 2: Treinamento a Longo Prazo', docente:'Dr. Cesar Cavinato',
+    youtube:'https://www.youtube.com/watch?v=d4_hHoeBUA4',
+    avaliacao:'https://forms.office.com/pages/responsepage.aspx?id=3qZIQdENBE2kxXjjdOT21h036K41tOZCk3_M4V8sOPxUN01XRDM5RFI4UjJVWE5YVVFEVjJDUVZYNS4u&route=shorturl',
+    material:'https://drive.google.com/uc?id=15DR89Km_XPFivPpQR890hpHXj3P6d2Ra&export=download' },
+  { id:'M1A3', title:'Aula 3: Pedagogia do Esporte', docente:'Dra. Larissa Galatti',
+    youtube:'https://www.youtube.com/watch?v=qW2Rfc7Fh9g',
+    youtube2:'https://www.youtube.com/watch?v=h_qs8yV5vbQ',
+    avaliacao:'https://forms.office.com/pages/responsepage.aspx?id=3qZIQdENBE2kxXjjdOT21h036K41tOZCk3_M4V8sOPxUOVdFTDEzRUtEUEdTV1Y2WUpOTE9SNzlRUy4u&route=shorturl',
+    material:'https://drive.google.com/uc?id=1TwplyAsvo2gSIGN6LVVsQIAJ-WH-95kT&export=download' },
+  { id:'M1A4', title:'Aula 4: Pedagogia do Jogo I', docente:'Dr. Alcides Scaglia',
+    youtube:'https://www.youtube.com/watch?v=5kyfUsQTfx4',
+    avaliacao:'https://forms.office.com/pages/responsepage.aspx?id=3qZIQdENBE2kxXjjdOT21h036K41tOZCk3_M4V8sOPxUOVdFTDEzRUtEUEdTV1Y2WUpOTE9SNzlRUy4u&route=shorturl',
+    material:'https://drive.google.com/uc?id=1AdbgXZSIKvtj4E_CznfmMXk0LG8QvCkd&export=download' },
+];
+
+// ─── INIT ─────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  const s = localStorage.getItem('sesi_parceiro');
+  if (!s) { window.location.href='index.html'; return; }
+  parceiro = JSON.parse(s);
+
+  document.getElementById('sb-nome').textContent = parceiro.nome || parceiro.nome_responsavel || '—';
+  document.getElementById('sb-cnpj').textContent = fmtCNPJ(parceiro.cnpj || '');
+
+  await carregarStatus();
+  renderAulas();
+  addGradeRow();
+  addSipafRow();
+});
+
+function fmtCNPJ(c) {
+  c = c.replace(/\D/g,'');
+  return c.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,'$1.$2.$3/$4-$5') || c;
+}
+
+// ─── STATUS ───────────────────────────────────────────────────
+async function carregarStatus() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/parceiros?id=eq.${parceiro.id}&select=etapa_documentos,etapa_grade,etapa_acesso_sipaf,etapa_curso_m1`,{headers:H});
+    const d = await r.json();
+    if (d[0]) {
+      stepStatus = [d[0].etapa_documentos,d[0].etapa_grade,d[0].etapa_acesso_sipaf,d[0].etapa_curso_m1];
+      updateAllStatus();
+    }
+  } catch(e) { console.error(e); }
+}
+
+function updateAllStatus() {
+  const labels = ['Documentos','Grade Horária','Acesso SIPAF','Curso M1'];
+  let done = 0;
+  stepStatus.forEach((ok,i) => {
+    const nav = document.getElementById(`nav-${i}`);
+    const icon = document.getElementById(`icon-${i}`);
+    const st = document.getElementById(`status-${i}`);
+    if (ok) {
+      nav.classList.add('done');
+      icon.textContent = '✓';
+      st.textContent = 'Concluído';
+      done++;
+    } else {
+      nav.classList.remove('done');
+      icon.textContent = i+1;
+      st.textContent = 'Pendente';
+    }
+  });
+  const pct = Math.round(done/4*100);
+  document.getElementById('progress-pct').textContent = pct+'%';
+  document.getElementById('progress-fill').style.width = pct+'%';
+  updateTopbar();
+}
+
+function updateTopbar() {
+  const titles = ['Documentos de Cadastro','Grade Horária','Acesso SIPAF / SESI App','Curso Obrigatório — Módulo 1'];
+  document.getElementById('topbar-title').textContent = titles[currentStep];
+  const done = stepStatus[currentStep];
+  const badge = document.getElementById('topbar-badge');
+  const badgeText = document.getElementById('badge-text');
+  badge.className = 'topbar-badge ' + (done ? 'badge-done' : 'badge-pending');
+  badgeText.textContent = done ? 'Concluído' : 'Pendente';
+}
+
+// ─── NAVEGAÇÃO ────────────────────────────────────────────────
+function goStep(idx) {
+  currentStep = idx;
+  document.querySelectorAll('.step-item').forEach((el,i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.screen').forEach((el,i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  updateTopbar();
+  document.querySelector('.main').scrollTo(0,0);
+}
+
+// ─── TIPO DE DOC ──────────────────────────────────────────────
+function toggleTipo() {
+  const tipo = document.getElementById('doc-tipo').value;
+  document.getElementById('docs-prefeitura').style.display = tipo==='prefeitura' ? 'block' : 'none';
+  document.getElementById('docs-empresa').style.display = ['empresa','ong','outro'].includes(tipo) ? 'block' : 'none';
+}
+
+function fileSelected(input, itemId) {
+  if (!input.files[0]) return;
+  const item = document.getElementById(itemId);
+  item.classList.add('uploaded');
+  item.querySelector('.doc-sub').textContent = '✓ ' + input.files[0].name;
+  item.querySelector('.doc-upload-btn').textContent = 'Substituir';
+  uploadedFiles[itemId] = input.files[0];
+}
+
+function maskTel(el) {
+  let v = el.value.replace(/\D/g,'').substring(0,11);
+  if (v.length >= 11) v = v.replace(/^(\d{2})(\d{5})(\d{4})$/,'($1) $2-$3');
+  else if (v.length >= 7) v = v.replace(/^(\d{2})(\d{4,5})(\d{0,4})$/,'($1) $2-$3');
+  else if (v.length >= 3) v = v.replace(/^(\d{2})(\d+)$/,'($1) $2');
+  el.value = v;
+}
+
+// ─── SALVAR DOCS ──────────────────────────────────────────────
+async function salvarDocs() {
+  const tipo = document.getElementById('doc-tipo').value;
+  const telefone = document.getElementById('doc-telefone').value.trim();
+  const email = document.getElementById('doc-email').value.trim();
+
+  if (!tipo) { showMsg('msg-docs','Selecione o tipo de parceiro.','error'); return; }
+  hideMsg('msg-docs');
+
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/parceiros?id=eq.${parceiro.id}`,{
+      method:'PATCH', headers:H,
+      body: JSON.stringify({ tipo, telefone, email, etapa_documentos:true, atualizado_em:new Date().toISOString() })
+    });
+
+    // Upload de arquivos para Supabase Storage
+    for (const [key, file] of Object.entries(uploadedFiles)) {
+      const path = `${parceiro.id}/${key}-${Date.now()}`;
+      await fetch(`${SUPABASE_URL}/storage/v1/object/documentos-parceiros/${path}`,{
+        method:'POST',
+        headers:{ 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}`, 'Content-Type':file.type },
+        body: file
+      });
+      await fetch(`${SUPABASE_URL}/rest/v1/documentos`,{
+        method:'POST', headers:H,
+        body: JSON.stringify({ parceiro_id:parceiro.id, tipo:key, nome_arquivo:file.name, storage_path:path })
+      });
+    }
+
+    stepStatus[0] = true;
+    updateAllStatus();
+    showMsg('msg-docs','Documentos salvos com sucesso!','success');
+    setTimeout(() => { hideMsg('msg-docs'); goStep(1); }, 1200);
+
+  } catch(e) { showMsg('msg-docs','Erro ao salvar. Tente novamente.','error'); }
+}
+
+// ─── GRADE HORÁRIA ────────────────────────────────────────────
+function addGradeRow() {
+  const id = Date.now();
+  gradeRows.push(id);
+  const tbody = document.getElementById('grade-tbody');
+  const tr = document.createElement('tr');
+  tr.id = `gr-${id}`;
+  tr.innerHTML = `
+    <td><input type="text" placeholder="Ex: Futsal" data-field="modalidade"/></td>
+    <td><select data-field="nivel">
+      <option value="">—</option>
+      <option>Participação</option><option>Rendimento</option><option>Alto Rendimento</option>
+    </select></td>
+    <td><input type="text" placeholder="Ex: Sub-12 A" data-field="fase_turma"/></td>
+    <td><select data-field="genero">
+      <option value="">—</option>
+      <option>Feminino</option><option>Masculino</option><option>Misto</option>
+    </select></td>
+    <td><input type="text" placeholder="Ex: 10 a 12 anos" data-field="faixa_etaria"/></td>
+    <td><input type="text" placeholder="Ex: Seg/Qua 15h" data-field="horario"/></td>
+    <td><input type="text" placeholder="Nome" data-field="professor"/></td>
+    <td><input type="text" placeholder="Local" data-field="local"/></td>
+    <td><button class="del-btn" onclick="delRow('gr-${id}',gradeRows,${id})">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function addSipafRow() {
+  const id = Date.now();
+  sipafRows.push(id);
+  const tbody = document.getElementById('sipaf-tbody');
+  const tr = document.createElement('tr');
+  tr.id = `sr-${id}`;
+  tr.innerHTML = `
+    <td><input type="text" placeholder="Nome completo" data-field="nome"/></td>
+    <td><input type="text" placeholder="00000000000" maxlength="11" data-field="cpf" oninput="this.value=this.value.replace(/\\D/g,'')"/></td>
+    <td><input type="date" data-field="data_nascimento"/></td>
+    <td><input type="email" placeholder="email@..." data-field="email"/></td>
+    <td><select data-field="funcao_sipaf">
+      <option value="">—</option>
+      <option>Professor(a)</option><option>Gestor(a)</option><option>Coordenador(a)</option>
+    </select></td>
+    <td><input type="text" placeholder="CREF (se houver)" data-field="cref"/></td>
+    <td><button class="del-btn" onclick="delRow('sr-${id}',sipafRows,${id})">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function delRow(trId, arr, id) {
+  const idx = arr.indexOf(id);
+  if (idx > -1) arr.splice(idx,1);
+  document.getElementById(trId)?.remove();
+}
+
+function getRowData(trId, fields) {
+  const tr = document.getElementById(trId);
+  if (!tr) return null;
+  const obj = {};
+  fields.forEach(f => {
+    const el = tr.querySelector(`[data-field="${f}"]`);
+    if (el) obj[f] = el.value.trim();
+  });
+  return obj;
+}
+
+async function salvarGrade() {
+  if (!gradeRows.length) { showMsg('msg-grade','Adicione ao menos uma turma.','error'); return; }
+  const gradeFields = ['modalidade','nivel','fase_turma','genero','faixa_etaria','horario','professor','local'];
+  const rows = gradeRows.map(id => ({
+    parceiro_id: parceiro.id,
+    ...getRowData(`gr-${id}`, gradeFields)
+  })).filter(r => r.modalidade);
+
+  if (!rows.length) { showMsg('msg-grade','Preencha ao menos a modalidade em uma linha.','error'); return; }
+
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/grade_horaria?parceiro_id=eq.${parceiro.id}`,{ method:'DELETE', headers:H });
+    await fetch(`${SUPABASE_URL}/rest/v1/grade_horaria`,{
+      method:'POST', headers:H, body: JSON.stringify(rows)
+    });
+    stepStatus[1] = true;
+    updateAllStatus();
+    showMsg('msg-grade','Grade salva com sucesso!','success');
+    setTimeout(() => { hideMsg('msg-grade'); goStep(2); }, 1200);
+  } catch(e) { showMsg('msg-grade','Erro ao salvar. Tente novamente.','error'); }
+}
+
+async function salvarSipaf() {
+  if (!sipafRows.length) { showMsg('msg-sipaf','Adicione ao menos um profissional.','error'); return; }
+  const sipafFields = ['nome','cpf','data_nascimento','email','funcao_sipaf','cref'];
+  const rows = sipafRows.map(id => ({
+    parceiro_id: parceiro.id,
+    ...getRowData(`sr-${id}`, sipafFields)
+  })).filter(r => r.nome && r.cpf);
+
+  if (!rows.length) { showMsg('msg-sipaf','Preencha ao menos nome e CPF em uma linha.','error'); return; }
+
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/acesso_sipaf?parceiro_id=eq.${parceiro.id}`,{ method:'DELETE', headers:H });
+    await fetch(`${SUPABASE_URL}/rest/v1/acesso_sipaf`,{
+      method:'POST', headers:H, body: JSON.stringify(rows)
+    });
+    stepStatus[2] = true;
+    updateAllStatus();
+    showMsg('msg-sipaf','Profissionais cadastrados com sucesso!','success');
+    setTimeout(() => { hideMsg('msg-sipaf'); goStep(3); }, 1200);
+  } catch(e) { showMsg('msg-sipaf','Erro ao salvar. Tente novamente.','error'); }
+}
+
+// ─── AULAS M1 ─────────────────────────────────────────────────
+let progresso = {};
+
+async function renderAulas() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/progresso_curso?parceiro_id=eq.${parceiro.id}`,{headers:H});
+    const data = await r.json();
+    data.forEach(d => progresso[d.aula_id] = d);
+  } catch(e) {}
+
+  const container = document.getElementById('aulas-list');
+  container.innerHTML = '';
+
+  AULAS.forEach(aula => {
+    const p = progresso[aula.id] || {};
+    const concluida = p.concluida || false;
+
+    const card = document.createElement('div');
+    card.className = 'aula-card' + (concluida ? ' concluida' : '');
+    card.id = `aula-${aula.id}`;
+
+    const numStr = aula.id.replace('M1A','');
+    const btn2 = aula.youtube2 ? `<a href="${aula.youtube2}" target="_blank" class="aula-btn aula-btn-watch" onclick="marcarAssistiu('${aula.id}')">▶ Parte 2</a>` : '';
+
+    card.innerHTML = `
+      <div class="aula-num">${concluida ? '✓' : numStr}</div>
+      <div class="aula-info">
+        <div class="aula-title">${aula.title}</div>
+        <div class="aula-doc">Docente: ${aula.docente}</div>
+        <div class="aula-prog">
+          <span class="prog-pill ${p.assistiu ? 'done' : ''}" id="pill-ass-${aula.id}">Assistiu</span>
+          <span class="prog-pill ${p.avaliacao_feita ? 'done' : ''}" id="pill-aval-${aula.id}">Avaliação</span>
+          <span class="prog-pill ${p.material_baixado ? 'done' : ''}" id="pill-mat-${aula.id}">Material</span>
+        </div>
+      </div>
+      <div class="aula-actions">
+        <a href="${aula.youtube}" target="_blank" class="aula-btn aula-btn-watch" onclick="marcarAssistiu('${aula.id}')">▶ ${aula.youtube2 ? 'Parte 1' : 'Assistir'}</a>
+        ${btn2}
+        <a href="${aula.avaliacao}" target="_blank" class="aula-btn aula-btn-eval" onclick="marcarAvaliacao('${aula.id}')">✎ Avaliação</a>
+        <a href="${aula.material}" target="_blank" class="aula-btn aula-btn-mat" onclick="marcarMaterial('${aula.id}')">⬇ Material</a>
+      </div>`;
+    container.appendChild(card);
+  });
+
+  atualizarContadorM1();
+}
+
+async function salvarProgresso(aulaId, campo) {
+  const atual = progresso[aulaId] || { parceiro_id: parceiro.id, aula_id: aulaId };
+  atual[campo] = true;
+
+  const assistiu = atual.assistiu || false;
+  const avaliacao = atual.avaliacao_feita || false;
+  atual.concluida = assistiu && avaliacao;
+
+  progresso[aulaId] = atual;
+
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/progresso_curso`,{
+      method:'POST',
+      headers:{ ...H, 'Prefer':'resolution=merge-duplicates' },
+      body: JSON.stringify(atual)
+    });
+  } catch(e) { console.error(e); }
+
+  // Atualizar pills
+  const p = progresso[aulaId];
+  document.getElementById(`pill-ass-${aulaId}`)?.classList.toggle('done', p.assistiu);
+  document.getElementById(`pill-aval-${aulaId}`)?.classList.toggle('done', p.avaliacao_feita);
+  document.getElementById(`pill-mat-${aulaId}`)?.classList.toggle('done', p.material_baixado);
+
+  const card = document.getElementById(`aula-${aulaId}`);
+  if (p.concluida) {
+    card?.classList.add('concluida');
+    card.querySelector('.aula-num').textContent = '✓';
+  }
+
+  atualizarContadorM1();
+}
+
+function marcarAssistiu(id){ salvarProgresso(id,'assistiu'); }
+function marcarAvaliacao(id){ setTimeout(() => salvarProgresso(id,'avaliacao_feita'), 500); }
+function marcarMaterial(id){ salvarProgresso(id,'material_baixado'); }
+
+function atualizarContadorM1() {
+  const concluidas = AULAS.filter(a => progresso[a.id]?.concluida).length;
+  document.getElementById('m1-concluidas').textContent = concluidas;
+  if (concluidas >= 4 && !stepStatus[3]) {
+    stepStatus[3] = true;
+    updateAllStatus();
+  }
+}
+
+// ─── UTILS ────────────────────────────────────────────────────
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.className = `msg ${type} show`;
+}
+function hideMsg(id) { document.getElementById(id).className = 'msg'; }
+function sair() {
+  localStorage.removeItem('sesi_parceiro');
+  window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>
