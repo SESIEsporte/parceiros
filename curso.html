@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SESI Esporte — Módulo 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --red:#C8102E;--red-d:#9B0D22;
+  --dark:#0A0A0A;--dark2:#141414;--dark3:#1A1A1A;--dark4:#222;
+  --border:#2A2A2A;--border2:#333;
+  --text:#E5E5E5;--text2:#A0A0A0;--text3:#555;
+  --white:#fff;
+  --green:#22C55E;--green-bg:rgba(34,197,94,0.12);
+  --amber:#F59E0B;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;}
+
+/* ── LOGIN SCREEN ── */
+#login-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:var(--dark);position:relative;overflow:hidden;
+}
+#login-screen::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 40%, rgba(200,16,46,0.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+.login-box{
+  width:420px;max-width:90vw;
+  background:rgba(20,20,20,0.95);
+  border:1px solid var(--border);border-radius:6px;
+  padding:40px;position:relative;z-index:1;
+}
+.login-logo{text-align:center;margin-bottom:28px;}
+.login-logo-badge{
+  width:64px;height:64px;background:var(--red);margin:0 auto 12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:28px;color:white;
+  clip-path:polygon(0 0,88% 0,100% 12%,100% 100%,12% 100%,0 88%);
+}
+.login-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--white);text-align:center;}
+.login-sub{font-size:13px;color:var(--text2);text-align:center;margin-top:4px;margin-bottom:28px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:6px;}
+.field input{
+  width:100%;background:var(--dark3);border:1px solid var(--border2);
+  border-radius:3px;padding:12px 14px;font-family:'DM Sans',sans-serif;
+  font-size:14px;color:var(--text);outline:none;transition:border-color 0.15s;
+}
+.field input::placeholder{color:var(--text3);}
+.field input:focus{border-color:var(--red);}
+.field-hint{font-size:11px;color:var(--text3);margin-top:4px;}
+.btn-login{
+  width:100%;padding:13px;background:var(--red);border:none;border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;color:white;cursor:pointer;
+  transition:background 0.15s;margin-top:8px;position:relative;overflow:hidden;
+}
+.btn-login:hover{background:var(--red-d);}
+.btn-login.loading{opacity:0.7;pointer-events:none;}
+.msg{padding:10px 14px;border-radius:3px;font-size:12px;margin-top:12px;display:none;}
+.msg.show{display:block;}
+.msg.error{background:rgba(255,68,68,0.1);border-left:3px solid #ff4444;color:#ff8888;}
+.msg.info{background:rgba(200,16,46,0.1);border-left:3px solid var(--red);color:var(--text);}
+
+/* ── CURSO SCREEN ── */
+#curso-screen{display:none;}
+
+/* ── HERO ── */
+.hero{
+  position:relative;
+  min-height:480px;
+  display:flex;align-items:flex-end;
+  padding:0 60px 60px;
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,#1a0408 0%,#0f0f0f 50%,#0a0a0a 100%);
+}
+.hero-particles{
+  position:absolute;inset:0;
+  background-image:radial-gradient(circle at 20% 30%,rgba(200,16,46,0.15) 0%,transparent 50%),
+    radial-gradient(circle at 80% 60%,rgba(200,16,46,0.08) 0%,transparent 40%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(200,16,46,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(200,16,46,0.03) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.hero-content{position:relative;z-index:1;max-width:700px;}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--red);margin-bottom:16px;
+}
+.hero-eyebrow::before{content:'';width:20px;height:1px;background:var(--red);}
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(52px,7vw,90px);
+  line-height:0.9;letter-spacing:2px;color:var(--white);
+  margin-bottom:16px;
+}
+.hero-title em{font-style:normal;color:var(--red);}
+.hero-desc{font-size:15px;color:var(--text2);line-height:1.7;max-width:500px;margin-bottom:28px;}
+.hero-meta{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.hero-stat{
+  display:flex;flex-direction:column;
+  padding:12px 20px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);border-radius:3px;
+  min-width:100px;
+}
+.hero-stat-value{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--white);line-height:1;}
+.hero-stat-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-top:2px;}
+.hero-stat.progress .hero-stat-value{color:var(--red);}
+.hero-stat.complete .hero-stat-value{color:var(--green);}
+
+/* ── PROFESSOR BADGE ── */
+.prof-badge{
+  position:absolute;top:28px;right:60px;z-index:10;
+  display:flex;align-items:center;gap:12px;
+  padding:10px 16px;
+  background:rgba(20,20,20,0.9);
+  border:1px solid var(--border);border-radius:4px;
+}
+.prof-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--red);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:15px;color:white;
+  flex-shrink:0;
+}
+.prof-info{}
+.prof-name{font-size:13px;font-weight:500;color:var(--text);}
+.prof-parceiro{font-size:11px;color:var(--text3);}
+.btn-sair-curso{
+  padding:5px 12px;background:transparent;border:1px solid var(--border2);
+  border-radius:2px;font-family:'DM Sans',sans-serif;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;color:var(--text3);cursor:pointer;
+  transition:all 0.15s;margin-left:8px;
+}
+.btn-sair-curso:hover{border-color:var(--text2);color:var(--text2);}
+
+/* ── SATISFACTION ── */
+.sat-bar{
+  background:rgba(200,16,46,0.06);
+  border-top:1px solid rgba(200,16,46,0.15);
+  border-bottom:1px solid rgba(200,16,46,0.15);
+  padding:14px 60px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+.sat-text{font-size:13px;color:var(--text2);}
+.sat-text strong{color:var(--text);}
+.sat-btn{
+  padding:8px 20px;background:var(--red);border:none;border-radius:2px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  letter-spacing:1.5px;text-transform:uppercase;color:white;
+  cursor:pointer;transition:background 0.15s;text-decoration:none;
+  white-space:nowrap;
+}
+.sat-btn:hover{background:var(--red-d);}
+
+/* ── AULAS ── */
+.aulas-section{padding:40px 60px 80px;}
+.section-label{
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--text3);margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.aula-row{
+  display:grid;
+  grid-template-columns:56px 1fr auto;
+  gap:0;
+  background:var(--dark2);
+  border:1px solid var(--border);
+  border-radius:6px;
+  margin-bottom:12px;
+  overflow:hidden;
+  transition:border-color 0.2s,transform 0.2s;
+  cursor:pointer;
+}
+.aula-row:hover{border-color:var(--border2);transform:translateX(4px);}
+.aula-row.concluida{border-color:rgba(34,197,94,0.25);}
+.aula-row.active{border-color:var(--red);border-left-width:3px;}
+
+.aula-num-col{
+  background:var(--dark3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:24px;
+  color:var(--text3);border-right:1px solid var(--border);
+  min-width:56px;
+}
+.aula-row.concluida .aula-num-col{color:var(--green);background:rgba(34,197,94,0.06);}
+.aula-row.active .aula-num-col{color:var(--red);}
+
+.aula-body{padding:18px 20px;}
+.aula-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:3px;}
+.aula-docente{font-size:12px;color:var(--text3);font-style:italic;margin-bottom:10px;}
+
+.pills{display:flex;gap:6px;flex-wrap:wrap;}
+.pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:2px;font-size:11px;
+  border:1px solid var(--border2);color:var(--text3);
+  background:var(--dark3);transition:all 0.2s;
+}
+.pill::before{content:'○';font-size:9px;}
+.pill.done{background:var(--green-bg);border-color:rgba(34,197,94,0.3);color:var(--green);}
+.pill.done::before{content:'●';}
+
+.aula-actions{
+  padding:18px 20px;display:flex;flex-direction:column;
+  gap:8px;justify-content:center;align-items:flex-end;
+  border-left:1px solid var(--border);min-width:200px;
+}
+.aula-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 16px;border-radius:3px;font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:500;cursor:pointer;
+  transition:all 0.15s;text-decoration:none;border:none;white-space:nowrap;
+  width:100%;justify-content:center;
+}
+.btn-watch{background:var(--red);color:white;}
+.btn-watch:hover{background:var(--red-d);}
+.btn-eval{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-eval:hover{border-color:var(--amber);color:var(--amber);}
+.btn-mat{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-mat:hover{border-color:var(--text);color:var(--text);}
+
+/* ── CONCLUSÃO ── */
+.conclusao-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.92);
+  z-index:200;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.4s;
+}
+.conclusao-overlay.show{opacity:1;pointer-events:all;}
+.conclusao-box{
+  text-align:center;max-width:480px;padding:48px;
+  background:var(--dark2);border:1px solid rgba(34,197,94,0.3);
+  border-radius:8px;position:relative;overflow:hidden;
+}
+.conclusao-box::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%,rgba(34,197,94,0.08) 0%,transparent 60%);
+}
+.conclusao-icon{
+  width:80px;height:80px;margin:0 auto 24px;
+  background:var(--green-bg);border:2px solid var(--green);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:36px;position:relative;z-index:1;
+  animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;
+}
+@keyframes popIn{
+  from{transform:scale(0);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+.conclusao-title{
+  font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;
+  color:var(--green);margin-bottom:8px;position:relative;z-index:1;
+}
+.conclusao-name{
+  font-size:16px;font-weight:500;color:var(--white);
+  margin-bottom:8px;position:relative;z-index:1;
+}
+.conclusao-sub{font-size:13px;color:var(--text2);line-height:1.6;position:relative;z-index:1;}
+.conclusao-btn{
+  display:inline-block;margin-top:28px;
+  padding:12px 32px;background:var(--green);border:none;border-radius:3px;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;color:var(--dark);
+  cursor:pointer;transition:opacity 0.15s;
+}
+.conclusao-btn:hover{opacity:0.85;}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap{
+  background:var(--dark3);height:3px;margin:0 60px;
+  border-radius:2px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;background:var(--red);border-radius:2px;
+  transition:width 0.5s ease;
+}
+
+@media(max-width:768px){
+  .hero{padding:0 20px 40px;min-height:360px;}
+  .prof-badge{top:16px;right:16px;}
+  .sat-bar{padding:14px 20px;}
+  .aulas-section{padding:24px 20px 60px;}
+  .aula-row{grid-template-columns:44px 1fr;}
+  .aula-actions{display:none;}
+  .progress-wrap{margin:0 20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-badge">SE</div>
+      <div class="login-title">Acesso ao Curso</div>
+      <div class="login-sub">Módulo 1 — Programa SESI Esporte e Aprendizagem</div>
+    </div>
+
+    <div class="field">
+      <label>Nome Completo</label>
+      <input type="text" id="l-nome" placeholder="Seu nome completo"/>
+    </div>
+    <div class="field">
+      <label>CPF</label>
+      <input type="text" id="l-cpf" placeholder="00000000000" maxlength="11"
+        oninput="this.value=this.value.replace(/\D/g,'')"/>
+      <div class="field-hint">Somente números, sem pontuação</div>
+    </div>
+    <div class="field">
+      <label>CNPJ do Parceiro</label>
+      <input type="text" id="l-cnpj" placeholder="00.000.000/0000-00" maxlength="18"
+        oninput="maskCNPJ(this)"/>
+    </div>
+
+    <button class="btn-login" id="btn-login" onclick="fazerLogin()">
+      Acessar Curso
+    </button>
+    <div class="msg" id="msg-login"></div>
+  </div>
+</div>
+
+<!-- ── CURSO ── -->
+<div id="curso-screen">
+
+  <!-- Professor Badge -->
+  <div class="prof-badge">
+    <div class="prof-avatar" id="prof-avatar">—</div>
+    <div class="prof-info">
+      <div class="prof-name" id="prof-nome-display">—</div>
+      <div class="prof-parceiro" id="prof-parceiro-display">—</div>
+    </div>
+    <button class="btn-sair-curso" onclick="sair()">Sair</button>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-particles"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Módulo 1</div>
+      <h1 class="hero-title">
+        Programa SESI<br>
+        <em>Esporte</em>
+      </h1>
+      <p class="hero-desc">
+        Compreenda os fundamentos e a metodologia do Programa SESI Esporte no nível de Participação. Complete todas as aulas para finalizar o módulo.
+      </p>
+      <div class="hero-meta">
+        <div class="hero-stat">
+          <div class="hero-stat-value">4</div>
+          <div class="hero-stat-label">Aulas</div>
+        </div>
+        <div class="hero-stat progress">
+          <div class="hero-stat-value" id="stat-concluidas">0</div>
+          <div class="hero-stat-label">Concluídas</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value" id="stat-pct">0%</div>
+          <div class="hero-stat-label">Progresso</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+
+  <!-- Satisfaction -->
+  <div class="sat-bar">
+    <div class="sat-text"><strong>Pesquisa de Satisfação</strong> — Sua opinião melhora o programa.</div>
+    <a href="https://forms.office.com/r/4eQzL8DyB6" target="_blank" class="sat-btn">Responder Agora</a>
+  </div>
+
+  <!-- Aulas -->
+  <div class="aulas-section">
+    <div class="section-label">Aulas do Módulo</div>
+    <div id="aulas-container"></div>
+  </div>
+
+</div>
+
+<!-- Conclusão overlay -->
+<div class="conclusao-overlay" id="conclusao-overlay">
+  <div class="conclusao-box">
+    <div class="conclusao-icon">🏆</div>
+    <div class="conclusao-title">Parabéns!</div>
+    <div class="conclusao-name" id="conclusao-nome"></div>
+    <div class="conclusao-sub">
+      Você concluiu o <strong>Módulo 1</strong> do Programa SESI Esporte com sucesso.<br>
+      Seu progresso foi registrado e seu orientador será notificado.
+    </div>
+    <button class="conclusao-btn" onclick="fecharConclusao()">Continuar</button>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://lluujmxlmcdvyvkrmbup.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_NJ5gFVAMXDgm3SNcAVz-tA_IMAiLLBj';
+const H = {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`};
+
+const AULAS = [
+  {
+    id:'M1A1',
+    title:'Aula 1: SESI Esporte — Metodologia, conceitos e aplicações',
+    docente:'Esp. Dayane de Souza',
+    youtube:'https://www.youtube.com/watch?v=w97w_QYFAj8',
+    avaliacao:'https://forms.office.com/pages/responsepage.aspx?id=3qZIQdENBE2kxXjjdOT21h036K41tOZCk3_M4V8sOPxUQjJUUlVPWEU2NVhRNTRGRDhVVDdYNEpFMC4u&route=shorturl',
+    material:'https://drive.google.com/uc?id=1qM3UOtG2bdd6I8bexecp7YNw3Uef3K-u&export=download'
+  },
+  {
+    id:'M1A2',
+    title:'Aula 2: Treinamento a Longo Prazo',
+    docente:'Dr. Cesar Cavinato',
+    youtube:'https://www.youtube.com/watch?v=d4_hHoeBUA4',
+    avaliacao:'https://forms.office.com/pages/responsepage.aspx?id=3qZIQdENBE2kxXjjdOT21h036K41tOZCk3_M4V8sOPxUN01XRDM5RFI4UjJVWE5YVVFEVjJDUVZYNS4u&route=shorturl',
+    material:'https://drive.google.com/uc?id=15DR89Km_XPFivPpQR890hpHXj3P6d2Ra&export=download'
+  },
+  {
+    id:'M1A3',
+    title:'Aula 3: Pedagogia do Esporte',
+    docente:'Dra. Larissa Galatti',
+    youtube:'https://www.youtube.com/watch?v=qW2Rfc7Fh9g',
+    youtube2:'https://www.youtube.com/watch?v=h_qs8yV5vbQ',
+    avaliacao:'https://forms.office.com/pages/responsepage.aspx?id=3qZIQdENBE2kxXjjdOT21h036K41tOZCk3_M4V8sOPxUOVdFTDEzRUtEUEdTV1Y2WUpOTE9SNzlRUy4u&route=shorturl',
+    material:'https://drive.google.com/uc?id=1TwplyAsvo2gSIGN6LVVsQIAJ-WH-95kT&export=download'
+  },
+  {
+    id:'M1A4',
+    title:'Aula 4: Pedagogia do Jogo I',
+    docente:'Dr. Alcides Scaglia',
+    youtube:'https://www.youtube.com/watch?v=5kyfUsQTfx4',
+    avaliacao:'https://forms.office.com/pages/responsepage.aspx?id=3qZIQdENBE2kxXjjdOT21h036K41tOZCk3_M4V8sOPxUOVdFTDEzRUtEUEdTV1Y2WUpOTE9SNzlRUy4u&route=shorturl',
+    material:'https://drive.google.com/uc?id=1AdbgXZSIKvtj4E_CznfmMXk0LG8QvCkd&export=download'
+  }
+];
+
+let sessao = null;
+let progresso = {};
+
+// ── CNPJ MASK ────────────────────────────────────────────────
+function maskCNPJ(el){
+  let v=el.value.replace(/\D/g,'').substring(0,14);
+  v=v.replace(/^(\d{2})(\d)/,'$1.$2');
+  v=v.replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3');
+  v=v.replace(/\.(\d{3})(\d)/,'.$1/$2');
+  v=v.replace(/(\d{4})(\d)/,'$1-$2');
+  el.value=v;
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────
+async function fazerLogin(){
+  const nome = document.getElementById('l-nome').value.trim();
+  const cpf  = document.getElementById('l-cpf').value.trim();
+  const cnpj = document.getElementById('l-cnpj').value.replace(/\D/g,'');
+
+  if(!nome||!cpf||!cnpj){
+    showMsg('msg-login','Preencha todos os campos.','error'); return;
+  }
+  if(cpf.length!==11){ showMsg('msg-login','CPF deve ter 11 dígitos.','error'); return; }
+  if(cnpj.length!==14){ showMsg('msg-login','CNPJ inválido.','error'); return; }
+
+  const btn=document.getElementById('btn-login');
+  btn.classList.add('loading'); btn.textContent='Verificando...';
+  hideMsg('msg-login');
+
+  try {
+    // Buscar parceiro pelo CNPJ
+    const rP = await fetch(
+      `${SUPABASE_URL}/rest/v1/parceiros?cnpj=eq.${cnpj}&select=id,razao_social,unidade_sesi`,
+      {headers:H}
+    );
+    const parceiros = await rP.json();
+
+    if(!parceiros.length){
+      showMsg('msg-login','CNPJ não encontrado. Verifique com seu orientador.','error');
+      btn.classList.remove('loading'); btn.textContent='Acessar Curso'; return;
+    }
+
+    const parceiro = parceiros[0];
+
+    // Verificar se o CPF está cadastrado no SIPAF deste parceiro
+    const rS = await fetch(
+      `${SUPABASE_URL}/rest/v1/acesso_sipaf?parceiro_id=eq.${parceiro.id}&cpf=eq.${cpf}&select=id,nome,funcao_sipaf`,
+      {headers:H}
+    );
+    const sipaf = await rS.json();
+
+    if(!sipaf.length){
+      showMsg('msg-login',
+        'CPF não encontrado neste parceiro. Solicite ao responsável que faça seu cadastro na etapa 3 da trilha.',
+        'error'
+      ); btn.classList.remove('loading'); btn.textContent='Acessar Curso'; return;
+    }
+
+    // Login ok — salvar sessão
+    sessao = {
+      cpf,
+      nome: sipaf[0].nome || nome,
+      parceiro_id: parceiro.id,
+      razao_social: parceiro.razao_social,
+      unidade_sesi: parceiro.unidade_sesi
+    };
+    localStorage.setItem('sesi_professor', JSON.stringify(sessao));
+
+    await iniciarCurso();
+
+  } catch(e){
+    showMsg('msg-login','Erro ao conectar. Tente novamente.','error');
+    btn.classList.remove('loading'); btn.textContent='Acessar Curso';
+  }
+}
+
+// ── INICIAR CURSO ─────────────────────────────────────────────
+async function iniciarCurso(){
+  if(!sessao) return;
+
+  // Carregar progresso
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/progresso_curso?cpf=eq.${sessao.cpf}&parceiro_id=eq.${sessao.parceiro_id}&select=*`,
+      {headers:H}
+    );
+    const data = await r.json();
+    data.forEach(d => progresso[d.aula_id]=d);
+  } catch(e){ console.error(e); }
+
+  // UI
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('curso-screen').style.display='block';
+
+  const initials = sessao.nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+  document.getElementById('prof-avatar').textContent = initials;
+  document.getElementById('prof-nome-display').textContent = sessao.nome;
+  document.getElementById('prof-parceiro-display').textContent = sessao.razao_social;
+
+  renderAulas();
+  atualizarStats();
+}
+
+// ── RENDER AULAS ──────────────────────────────────────────────
+function renderAulas(){
+  const container = document.getElementById('aulas-container');
+  container.innerHTML = '';
+
+  AULAS.forEach((aula,idx) => {
+    const p = progresso[aula.id] || {};
+    const concluida = p.concluida || false;
+
+    const row = document.createElement('div');
+    row.className = `aula-row${concluida?' concluida':''}`;
+    row.id = `aula-row-${aula.id}`;
+
+    const btn2 = aula.youtube2
+      ? `<a href="${aula.youtube2}" target="_blank" class="aula-btn btn-watch"
+           onclick="marcar('${aula.id}','assistiu')">▶ Parte 2</a>`
+      : '';
+
+    row.innerHTML = `
+      <div class="aula-num-col">${concluida ? '✓' : idx+1}</div>
+      <div class="aula-body">
+        <div class="aula-title">${aula.title}</div>
+        <div class="aula-docente">${aula.docente}</div>
+        <div class="pills">
+          <span class="pill${p.assistiu?' done':''}" id="pill-ass-${aula.id}">Assistiu</span>
+          <span class="pill${p.avaliacao_feita?' done':''}" id="pill-aval-${aula.id}">Avaliação</span>
+          <span class="pill${p.material_baixado?' done':''}" id="pill-mat-${aula.id}">Material</span>
+        </div>
+      </div>
+      <div class="aula-actions">
+        <a href="${aula.youtube}" target="_blank" class="aula-btn btn-watch"
+           onclick="marcar('${aula.id}','assistiu')">
+          ▶ ${aula.youtube2 ? 'Parte 1' : 'Assistir Aula'}
+        </a>
+        ${btn2}
+        <a href="${aula.avaliacao}" target="_blank" class="aula-btn btn-eval"
+           onclick="setTimeout(()=>marcar('${aula.id}','avaliacao_feita'),800)">
+          ✎ Avaliação
+        </a>
+        <a href="${aula.material}" target="_blank" class="aula-btn btn-mat"
+           onclick="marcar('${aula.id}','material_baixado')">
+          ⬇ Material
+        </a>
+      </div>`;
+    container.appendChild(row);
+  });
+}
+
+// ── MARCAR PROGRESSO ──────────────────────────────────────────
+async function marcar(aulaId, campo){
+  const p = progresso[aulaId] || {
+    cpf: sessao.cpf,
+    nome_professor: sessao.nome,
+    parceiro_id: sessao.parceiro_id,
+    aula_id: aulaId,
+    assistiu: false,
+    avaliacao_feita: false,
+    material_baixado: false,
+    concluida: false
+  };
+
+  p[campo] = true;
+  p.concluida = p.assistiu && p.avaliacao_feita;
+  p.atualizado_em = new Date().toISOString();
+  progresso[aulaId] = p;
+
+  // Atualizar pills
+  document.getElementById(`pill-ass-${aulaId}`)?.classList.toggle('done', p.assistiu);
+  document.getElementById(`pill-aval-${aulaId}`)?.classList.toggle('done', p.avaliacao_feita);
+  document.getElementById(`pill-mat-${aulaId}`)?.classList.toggle('done', p.material_baixado);
+
+  // Atualizar card
+  const row = document.getElementById(`aula-row-${aulaId}`);
+  if(p.concluida){
+    row?.classList.add('concluida');
+    row.querySelector('.aula-num-col').textContent = '✓';
+  }
+
+  // Salvar no banco
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/progresso_curso`, {
+      method:'POST',
+      headers:{...H,'Prefer':'resolution=merge-duplicates'},
+      body: JSON.stringify(p)
+    });
+  } catch(e){ console.error(e); }
+
+  atualizarStats();
+}
+
+// ── STATS ─────────────────────────────────────────────────────
+function atualizarStats(){
+  const concluidas = AULAS.filter(a => progresso[a.id]?.concluida).length;
+  const pct = Math.round(concluidas/4*100);
+
+  document.getElementById('stat-concluidas').textContent = concluidas;
+  document.getElementById('stat-pct').textContent = pct+'%';
+  document.getElementById('progress-fill').style.width = pct+'%';
+
+  if(concluidas>=4){
+    setTimeout(() => mostrarConclusao(), 600);
+  }
+}
+
+function mostrarConclusao(){
+  if(localStorage.getItem(`conclusao_${sessao.cpf}_${sessao.parceiro_id}`)) return;
+  document.getElementById('conclusao-nome').textContent = sessao.nome;
+  document.getElementById('conclusao-overlay').classList.add('show');
+  localStorage.setItem(`conclusao_${sessao.cpf}_${sessao.parceiro_id}`, '1');
+}
+
+function fecharConclusao(){
+  document.getElementById('conclusao-overlay').classList.remove('show');
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+function showMsg(id,text,type){
+  const el=document.getElementById(id);
+  el.textContent=text; el.className=`msg ${type} show`;
+}
+function hideMsg(id){ document.getElementById(id).className='msg'; }
+
+function sair(){
+  localStorage.removeItem('sesi_professor');
+  sessao=null; progresso={};
+  document.getElementById('curso-screen').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('l-nome').value='';
+  document.getElementById('l-cpf').value='';
+  document.getElementById('l-cnpj').value='';
+}
+
+// ── AUTO LOGIN ────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  const s = localStorage.getItem('sesi_professor');
+  if(s){
+    try {
+      sessao = JSON.parse(s);
+      await iniciarCurso();
+    } catch(e){ localStorage.removeItem('sesi_professor'); }
+  }
+});
+</script>
+</body>
+</html>
